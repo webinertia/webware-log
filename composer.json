@@ -45,7 +45,7 @@
         "infection/infection": "^0.35.0",
         "laminas/laminas-diactoros": "^3.5",
         "laminas/laminas-eventmanager": "^3.14",
-        "laminas/laminas-i18n": "^2.31.0",
+        "laminas/laminas-i18n": "^3.0.0",
         "laminas/laminas-servicemanager": "^3.23.0 || ^4.0.0",
         "mezzio/mezzio": "^3.26",
         "mezzio/mezzio-authentication": "^1.13",
