@@ -42,17 +42,16 @@ use Psr\Log\LoggerInterface;
  * }
  * @phpstan-type LogFactories array{
  *     ListenerProviderAggregate::class: class-string,
- *     Psr3LogLaminasListener::class: class-string,
- *     Psr3LogPsr14Listener::class: class-string,
+ *     Listener\Psr3LogPsr14Listener::class: class-string,
  *     LoggerInterface::class: class-string,
- *     MonologMiddleware::class: class-string,
- *     PhpDbHandler::class: class-string,
- *     LaminasI18nProcessor::class: class-string,
+ *     Http\Middleware\MonologMiddleware::class: class-string,
+ *     Handler\PhpDbHandler::class: class-string,
+ *     Processor\LaminasI18nProcessor::class: class-string,
  * }
  * @phpstan-type LogInvokables array{
  *     AttachableListenerProvider::class: class-string,
  *     PrioritizedListenerProvider::class: class-string,
- *     RamseyUuidProcessor::class: class-string,
+ *     Processor\RamseyUuidProcessor::class: class-string,
  * }
  * @phpstan-type LogDependencies array{
  *     aliases: LogAliases,
@@ -104,8 +103,8 @@ class ConfigProvider
                 ],
             ],
             'factories'  => [
-                ListenerProviderAggregate::class         => Container\ListenerProviderAggregateFactory::class,
-                Listener\Psr3LogLaminasListener::class   => Listener\Psr3LogLaminasListenerFactory::class,
+                ListenerProviderAggregate::class => Container\ListenerProviderAggregateFactory::class,
+
                 Listener\Psr3LogPsr14Listener::class     => Listener\Psr3LogPsr14ListenerFactory::class,
                 LoggerInterface::class                   => Container\LogFactory::class,
                 Http\Middleware\MonologMiddleware::class => Http\Middleware\Container\MonologMiddlewareFactory::class,

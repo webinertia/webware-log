@@ -15,10 +15,9 @@ declare(strict_types=1);
 namespace WebwareTest\Log\Processor;
 
 use DateTimeImmutable;
-use Laminas\I18n\Translator\TranslatorInterface;
+use Laminas\Translator\TranslatorInterface;
 use Monolog\Level;
 use Monolog\LogRecord;
-use Override;
 use PHPUnit\Framework\Attributes\CoversClass;
 use PHPUnit\Framework\Attributes\CoversMethod;
 use PHPUnit\Framework\Attributes\Test;
@@ -28,11 +27,10 @@ use PHPUnit\Framework\TestCase;
 use Webware\Log\Processor\LaminasI18nProcessor;
 
 #[CoversClass(LaminasI18nProcessor::class)]
+#[CoversMethod(LaminasI18nProcessor::class, '__construct')]
 #[CoversMethod(LaminasI18nProcessor::class, '__invoke')]
 final class LaminasI18nProcessorTest extends TestCase
 {
-    private LaminasI18nProcessor $processor;
-
     /**
      * @throws \PHPUnit\Exception
      */
@@ -42,7 +40,8 @@ final class LaminasI18nProcessorTest extends TestCase
         /** @var Stub&TranslatorInterface $translator */
         $translator = $this->createStub(TranslatorInterface::class);
         $translator->method('translate')->willReturn('translated');
-        $this->processor->setTranslator($translator);
+
+        $processor = new LaminasI18nProcessor($translator);
 
         $record = new LogRecord(
             datetime: new DateTimeImmutable(),
@@ -53,7 +52,7 @@ final class LaminasI18nProcessorTest extends TestCase
             extra   : ['foo' => 'bar'],
         );
 
-        $result = ($this->processor)($record);
+        $result = $processor($record);
 
         $this->assertSame(['key' => 'value'], $result->context);
         $this->assertSame(['foo' => 'bar'], $result->extra);
@@ -65,8 +64,9 @@ final class LaminasI18nProcessorTest extends TestCase
     #[Test]
     public function invokeReturnsLogRecord(): void
     {
-        $record = $this->makeRecord();
-        $result = ($this->processor)($record);
+        $processor = new LaminasI18nProcessor($this->createStub(TranslatorInterface::class));
+
+        $result = $processor($this->makeRecord());
 
         $this->assertInstanceOf(LogRecord::class, $result);
     }
@@ -75,19 +75,7 @@ final class LaminasI18nProcessorTest extends TestCase
      * @throws \PHPUnit\Exception
      */
     #[Test]
-    public function invokeReturnsRecordUnchangedWhenNoTranslatorSet(): void
-    {
-        $record = $this->makeRecord('original message');
-        $result = ($this->processor)($record);
-
-        $this->assertSame('original message', $result->message);
-    }
-
-    /**
-     * @throws \PHPUnit\Exception
-     */
-    #[Test]
-    public function invokeTranslatesMessageWhenTranslatorIsSet(): void
+    public function invokeTranslatesMessageWithInjectedTranslator(): void
     {
         /** @var MockObject&TranslatorInterface $translator */
         $translator = $this->createMock(TranslatorInterface::class);
@@ -96,18 +84,12 @@ final class LaminasI18nProcessorTest extends TestCase
             ->with('Hello world')
             ->willReturn('Hola mundo');
 
-        $this->processor->setTranslator($translator);
+        $processor = new LaminasI18nProcessor($translator);
 
         $record = $this->makeRecord('Hello world');
-        $result = ($this->processor)($record);
+        $result = $processor($record);
 
         $this->assertSame('Hola mundo', $result->message);
-    }
-
-    #[Override]
-    protected function setUp(): void
-    {
-        $this->processor = new LaminasI18nProcessor();
     }
 
     private function makeRecord(string $message = 'Hello world'): LogRecord

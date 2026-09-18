@@ -14,28 +14,22 @@ declare(strict_types=1);
 
 namespace Webware\Log\Processor;
 
-use Laminas\I18n\Translator\TranslatorAwareInterface;
-use Laminas\I18n\Translator\TranslatorAwareTrait;
+use Laminas\Translator\TranslatorInterface;
 use Monolog\LogRecord;
 use Monolog\Processor\ProcessorInterface;
 use Override;
 
-final class LaminasI18nProcessor implements ProcessorInterface, TranslatorAwareInterface
+final class LaminasI18nProcessor implements ProcessorInterface
 {
-    use TranslatorAwareTrait;
+    public function __construct(
+        private readonly TranslatorInterface $translator,
+    ) {}
 
     #[Override]
     public function __invoke(LogRecord $record): LogRecord
     {
-        $translator = $this->getTranslator();
-        if (null === $translator) {
-            return $record;
-        }
-
-        $translated = $translator->translate($record->message);
-
         return $record->with(
-            message: $translated,
+            message: $this->translator->translate($record->message),
             context: $record->context,
             extra  : $record->extra,
         );
