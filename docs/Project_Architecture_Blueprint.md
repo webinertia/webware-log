@@ -300,7 +300,7 @@ Both handlers extend `Monolog\Handler\AbstractProcessingHandler` and write one r
 
 ---
 
-### 3.7 Middleware (`src/Middleware/MonologMiddleware.php`)
+### 3.7 Middleware (`src/Http/Middleware/MonologMiddleware.php`)
 
 A PSR-15 `MiddlewareInterface` that runs early in the Mezzio pipeline to:
 

@@ -12,7 +12,7 @@ declare(strict_types=1);
  * file that was distributed with this source code.
  */
 
-namespace Webware\Log\Middleware;
+namespace Webware\Log\Http\Middleware;
 
 use Mezzio\Authentication\UserInterface;
 use Monolog\Logger;

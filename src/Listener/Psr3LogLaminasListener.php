@@ -20,12 +20,11 @@ use Laminas\EventManager\EventManagerInterface;
 use Monolog\Level;
 use Monolog\Logger;
 use Override;
-use Psr\Http\Server\MiddlewareInterface;
-use Psr\Http\Server\RequestHandlerInterface;
 use Psr\Log\InvalidArgumentException;
 use Psr\Log\LoggerInterface;
 use Stringable;
 use Webware\Log\Event\LogEvent;
+use Webware\Log\Http\PipelineIdentifiers;
 use Webware\Log\LogChannel;
 
 use function assert;
@@ -36,10 +35,7 @@ use function assert;
 final class Psr3LogLaminasListener extends AbstractListenerAggregate
 {
     /** @var list<class-string> */
-    private array $identifiers = [
-        MiddlewareInterface::class,
-        RequestHandlerInterface::class,
-    ];
+    private array $identifiers = PipelineIdentifiers::ALL;
 
     public function __construct(
         private LoggerInterface&Logger $logger,

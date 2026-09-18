@@ -12,7 +12,7 @@ declare(strict_types=1);
  * file that was distributed with this source code.
  */
 
-namespace WebwareTest\Log\Middleware;
+namespace WebwareTest\Log\Http\Middleware\Container;
 
 use Monolog\Logger;
 use PHPUnit\Framework\Attributes\CoversClass;
@@ -23,8 +23,8 @@ use Psr\Container\ContainerExceptionInterface;
 use Psr\Container\ContainerInterface;
 use Psr\Container\NotFoundExceptionInterface;
 use Psr\Log\LoggerInterface;
-use Webware\Log\Middleware\MonologMiddleware;
-use Webware\Log\Middleware\MonologMiddlewareFactory;
+use Webware\Log\Http\Middleware\Container\MonologMiddlewareFactory;
+use Webware\Log\Http\Middleware\MonologMiddleware;
 
 #[CoversClass(MonologMiddlewareFactory::class)]
 #[CoversMethod(MonologMiddlewareFactory::class, '__invoke')]
