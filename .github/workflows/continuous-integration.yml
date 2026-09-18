@@ -16,13 +16,14 @@ on:
 
 jobs:
   qa:
-    uses: webinertia/webware-tools/.github/workflows/continuous-integration.yml@0.1.x
+    uses: webinertia/webware-tools/.github/workflows/continuous-integration.yml@chore/ci-db-gating
     # CODECOV_TOKEN (org-wide) and INFECTION_DASHBOARD_API_KEY (per-repo) both
     # come through here, whichever scope actually defines each one.
     secrets: inherit
     with:
       php-versions: '["8.4", "8.5"]'
       run-integration: true
+      integration-php-version: "8.5"
       # Seeded MySQL container for integration tests; DB seeding itself is
       # handled by the ListenerExtension PHPUnit bootstrap, not this workflow.
       db-image: "mysql:9.7"
