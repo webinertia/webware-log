@@ -33,7 +33,7 @@ Import the database schema and add the package's `ConfigProvider` to your config
 
 ```php
 // config/pipeline.php
-$app->pipe(\Webware\Log\Middleware\MonologMiddleware::class);
+$app->pipe(\Webware\Log\Http\Middleware\MonologMiddleware::class);
 ```
 
 Enable optional features via config:
