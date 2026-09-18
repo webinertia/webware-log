@@ -104,13 +104,13 @@ class ConfigProvider
                 ],
             ],
             'factories'  => [
-                ListenerProviderAggregate::class       => Container\ListenerProviderAggregateFactory::class,
-                Listener\Psr3LogLaminasListener::class => Listener\Psr3LogLaminasListenerFactory::class,
-                Listener\Psr3LogPsr14Listener::class   => Listener\Psr3LogPsr14ListenerFactory::class,
-                LoggerInterface::class                 => Container\LogFactory::class,
-                Middleware\MonologMiddleware::class    => Middleware\MonologMiddlewareFactory::class,
-                Handler\PhpDbHandler::class            => Handler\PhpDbHandlerFactory::class,
-                Processor\LaminasI18nProcessor::class  => Processor\LaminasI18nProcessorFactory::class,
+                ListenerProviderAggregate::class         => Container\ListenerProviderAggregateFactory::class,
+                Listener\Psr3LogLaminasListener::class   => Listener\Psr3LogLaminasListenerFactory::class,
+                Listener\Psr3LogPsr14Listener::class     => Listener\Psr3LogPsr14ListenerFactory::class,
+                LoggerInterface::class                   => Container\LogFactory::class,
+                Http\Middleware\MonologMiddleware::class => Http\Middleware\Container\MonologMiddlewareFactory::class,
+                Handler\PhpDbHandler::class              => Handler\PhpDbHandlerFactory::class,
+                Processor\LaminasI18nProcessor::class    => Processor\LaminasI18nProcessorFactory::class,
             ],
             'invokables' => [
                 AttachableListenerProvider::class    => AttachableListenerProvider::class,
@@ -136,7 +136,7 @@ class ConfigProvider
         return [
             [
                 'middleware' => [
-                    Middleware\MonologMiddleware::class,
+                    Http\Middleware\MonologMiddleware::class,
                 ],
                 // 'priority'   => 9000,
             ],

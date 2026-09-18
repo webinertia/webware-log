@@ -12,7 +12,7 @@ declare(strict_types=1);
  * file that was distributed with this source code.
  */
 
-namespace Webware\Log\Middleware;
+namespace Webware\Log\Http\Middleware\Container;
 
 use Monolog\Logger;
 use Psr\Container\ContainerExceptionInterface;
@@ -20,6 +20,7 @@ use Psr\Container\ContainerInterface;
 use Psr\Container\NotFoundExceptionInterface;
 use Psr\Log\LoggerInterface;
 use Webware\Log\ConfigProvider;
+use Webware\Log\Http\Middleware\MonologMiddleware;
 
 /**
  * @phpstan-import-type LogDefaults from ConfigProvider
