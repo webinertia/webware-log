@@ -22,12 +22,12 @@ When enabled, `LogFactory` instantiates `RamseyUuidProcessor` and pushes it onto
 
 ## LaminasI18nProcessor
 
-Translates log messages using a `Laminas\I18n\Translator\TranslatorInterface` instance from the container.
+Translates log messages using a `Laminas\Translator\TranslatorInterface` instance from the container.
 
 ### Requirements
 
 - `laminas/laminas-i18n` must be installed.
-- `Laminas\I18n\Translator\TranslatorInterface` must be registered in the container.
+- `Laminas\Translator\TranslatorInterface` must be registered in the container.
 
 ### Enabling
 
@@ -39,7 +39,7 @@ return [
 ];
 ```
 
-When enabled, `LogFactory` retrieves `LaminasI18nProcessor` from the container, which in turn resolves the translator. If the translator is not found in the container the processor silently returns the record unchanged.
+When enabled, `LogFactory` retrieves `LaminasI18nProcessor` from the container, which is constructed with the translator from the container. If no translator is registered, `LaminasI18nProcessorFactory` throws a `ServiceNotFoundException`.
 
 ### Behaviour
 

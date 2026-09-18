@@ -9,7 +9,7 @@
 
 This package provides logging via Monolog for Mezzio (PSR-15) applications.
 It provides log handlers backed by `php-db/phpdb` for writing logs to a database table.
-It also provides a PSR-14 event listener and a Laminas EventManager bridge listener for error logging.
+It also provides a PSR-14 event listener for error logging.
 
 ## Documentation
 

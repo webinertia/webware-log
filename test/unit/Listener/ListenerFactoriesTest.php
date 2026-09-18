@@ -23,34 +23,13 @@ use Psr\Container\ContainerExceptionInterface;
 use Psr\Container\ContainerInterface;
 use Psr\Container\NotFoundExceptionInterface;
 use Psr\Log\LoggerInterface;
-use Webware\Log\Listener\Psr3LogLaminasListener;
-use Webware\Log\Listener\Psr3LogLaminasListenerFactory;
 use Webware\Log\Listener\Psr3LogPsr14Listener;
 use Webware\Log\Listener\Psr3LogPsr14ListenerFactory;
 
 #[CoversClass(Psr3LogPsr14ListenerFactory::class)]
-#[CoversClass(Psr3LogLaminasListenerFactory::class)]
 #[CoversMethod(Psr3LogPsr14ListenerFactory::class, '__invoke')]
-#[CoversMethod(Psr3LogLaminasListenerFactory::class, '__invoke')]
 final class ListenerFactoriesTest extends TestCase
 {
-    /**
-     * @throws ContainerExceptionInterface
-     * @throws NotFoundExceptionInterface
-     * @throws \PHPUnit\Exception
-     */
-    #[Test]
-    public function laminasFactoryReturnsLaminasListener(): void
-    {
-        $logger    = $this->createStub(Logger::class);
-        $container = $this->makeContainer($logger);
-
-        $factory = new Psr3LogLaminasListenerFactory();
-        $result  = $factory($container);
-
-        $this->assertInstanceOf(Psr3LogLaminasListener::class, $result);
-    }
-
     /**
      * @throws ContainerExceptionInterface
      * @throws NotFoundExceptionInterface

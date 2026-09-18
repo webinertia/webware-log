@@ -33,12 +33,8 @@ final class LaminasI18nProcessorFactory
             throw new ServiceNotFoundException(TranslatorInterface::class . ' was not found in the container');
         }
 
-        $processor = new LaminasI18nProcessor();
-
-        /** @var \Laminas\I18n\Translator\TranslatorInterface $translator */
         $translator = $container->get(TranslatorInterface::class);
-        $processor->setTranslator($translator);
 
-        return $processor;
+        return new LaminasI18nProcessor($translator);
     }
 }

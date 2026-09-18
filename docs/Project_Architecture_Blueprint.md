@@ -36,7 +36,7 @@
 - Provides Monolog handlers that persist log records to a relational database using either `laminas-db` or `php-db/phpdb`.
 - Decorates Mezzio's built-in `ErrorHandler` so that uncaught exceptions are automatically logged.
 
-> **Note — Laminas MVC:** The Laminas team is retiring the MVC framework. All MVC-specific integration (`Runtime::Mvc`, `AbstractController` listener identifiers) is being removed in 0.1.0. The `Psr3LogLaminasListener` will be deprecated in 0.1.0 and removed in 0.2.0.
+> **Note — Laminas MVC:** The Laminas team is retiring the MVC framework. All MVC-specific integration (`Runtime::Mvc`, `AbstractController` listener identifiers) was removed in 0.1.0, and the Laminas EventManager bridge listener has since been removed entirely — PSR-14 is the only supported dispatch path.
 
 ### Guiding Principles
 
@@ -125,11 +125,6 @@
 │  └──────────────────────────┘                                               │
 │          │ translates LogEvent → PSR-3 log call                             │
 │                                                                              │
-│  ┌──────────────────────────┐  listens to  ┌──────────────────────────┐    │
-│  │  Psr3LogLaminasListener  │ ─────────────│ Laminas SharedEventManager│    │
-│  │  (@deprecated 0.1.0)     │              └──────────────────────────┘    │
-│  └──────────────────────────┘                                               │
-│                                                                              │
 │  ┌─────────────────────┐   ┌───────────────────────────────┐               │
 │  │  LaminasDbHandler   │   │  PhpDbHandler                 │               │
 │  │  (laminas-db Sql)   │   │  (php-db/phpdb Sql)            │               │
@@ -171,21 +166,6 @@ Handler / Middleware / Service
 phly/phly-event-dispatcher (PSR-14 EventDispatcherInterface)
     ▼
 Psr3LogPsr14Listener.__invoke(LogEvent)
-    │  extracts: level, message, context, channel
-    │  optionally switches logger channel via withName()
-    ▼
-Monolog\Logger.log()  →  handler chain  →  DB
-```
-
-### Data Flow — Laminas EventManager Event _(deprecated 0.1.0, removed 0.2.0)_
-
-```
-Controller / Service
-    │  $events->trigger(LogEvent::EVENT_LOG_ERROR, $this, $params)
-    ▼
-Laminas SharedEventManager
-    ▼
-Psr3LogLaminasListener.onLog(EventInterface)
     │  extracts: level, message, context, channel
     │  optionally switches logger channel via withName()
     ▼
@@ -292,11 +272,8 @@ Both handlers extend `Monolog\Handler\AbstractProcessingHandler` and write one r
 |---|---|---|---|
 | `MezzioErrorListener` | Attached to Mezzio `ErrorHandler` via delegator | Logs uncaught `Throwable` with request/response context | Active |
 | `Psr3LogPsr14Listener` | PSR-14 `EventDispatcherInterface` (0.1.0+) | Bridges `LogEvent` to PSR-3 logger via standards-compliant dispatcher | New in 0.1.0 |
-| `Psr3LogLaminasListener` | `Laminas\EventManager\AbstractListenerAggregate` via `SharedEventManager` | Bridges `LogEvent` to PSR-3 logger | **Deprecated 0.1.0** |
 
 **`Psr3LogPsr14Listener`** (0.1.0+): a callable class that accepts a `LogEvent` directly. Registered with the PSR-14 listener provider for `LogEvent::class`. Reads `level`, `message`, `context`, and `channel` from the event; switches logger channel via `withName()` when the channel differs from `LogChannel::App`.
-
-**`Psr3LogLaminasListener`** (deprecated): previously attached to `MiddlewareInterface` and `RequestHandlerInterface` shared identifiers (the `AbstractController` identifier is removed in 0.1.0 as part of MVC retirement). It will be fully removed in 0.2.0.
 
 ---
 
@@ -315,7 +292,7 @@ A PSR-15 `MiddlewareInterface` that runs early in the Mezzio pipeline to:
 | Class | Monolog Integration | Function |
 |---|---|---|
 | `RamseyUuidProcessor` | `ProcessorInterface` | Generates a UUID v7 (time-ordered) using the record's `datetime` and stores it in `extra['uuid']` |
-| `LaminasI18nProcessor` | `ProcessorInterface` + `TranslatorAwareInterface` | Translates the log message using `Laminas\I18n\Translator`; only registered when `TranslatorInterface` is in container |
+| `LaminasI18nProcessor` | `ProcessorInterface` | Translates the log message using an injected `Laminas\Translator\TranslatorInterface`; only registered when the translator is in the container |
 
 ---
 
@@ -453,11 +430,7 @@ $dispatcher->dispatch(
 
 The dispatcher calls `Psr3LogPsr14Listener::__invoke(LogEvent)`, which translates the event to a PSR-3 `$logger->log()` call. This is standards-compliant and works with any PSR-14 dispatcher, not just `phly/phly-event-dispatcher`.
 
-### 7.4 Laminas EventManager Bridge _(deprecated 0.1.0, removed 0.2.0)_
-
-`Psr3LogLaminasListener` continues to function in 0.1.0 but is marked `@deprecated`. It listens on `MiddlewareInterface` and `RequestHandlerInterface` shared identifiers only (the `AbstractController` identifier was removed as part of MVC retirement). Full removal is targeted for 0.2.0.
-
-### 7.5 Monolog Pipeline
+### 7.4 Monolog Pipeline
 
 Handler and processor registration order in `LogFactory`:
 ```
@@ -468,7 +441,7 @@ PsrLogMessageProcessor           ← processor #2 (interpolate placeholders)
 ```
 Monolog processes records in **LIFO** order for processors and passes through handler stack in registration order.
 
-### 7.6 PhpDbHandler vs LaminasDbHandler
+### 7.5 PhpDbHandler vs LaminasDbHandler
 
 | Feature | `LaminasDbHandler` | `PhpDbHandler` |
 |---|---|---|
@@ -539,21 +512,6 @@ $dispatcher->dispatch($event);
 ```
 
 The `EventDispatcherInterface` is resolved from the container (provided by `phly/phly-event-dispatcher`). `Psr3LogPsr14Listener` must be registered with the listener provider for `LogEvent::class`.
-
-### 8.5 Triggering a Log via Laminas EventManager _(deprecated 0.1.0)_
-
-```php
-use Webware\Log\Event\LogEvent;
-use Monolog\Level;
-
-$event = new LogEvent(Level::Info);
-$event->setMessage('User {name} logged in');
-$event->setContext(['name' => $username]);
-$event->setChannel(LogChannel::User);
-$this->getEventManager()->trigger($event);
-```
-
-> This pattern is deprecated in 0.1.0 and will be removed in 0.2.0. Migrate to PSR-14 dispatch.
 
 ---
 
@@ -668,7 +626,7 @@ The current `withName()` pattern clones the logger. If per-channel processors ar
 ### ADR-002: PSR-14 Event Dispatcher via `phly/phly-event-dispatcher`
 
 **Context:** `Psr3LogLaminasListener` used `Laminas\EventManager` to bridge log events to PSR-3. Laminas EventManager is not PSR-compliant. The Laminas team is retiring Laminas MVC (which was the primary consumer of the shared event manager pattern). PSR-14 provides a standards-compliant, framework-agnostic event dispatch mechanism.  
-**Decision:** Add `phly/phly-event-dispatcher` as a `require` dependency and provide `Psr3LogPsr14Listener`. Deprecate `Psr3LogLaminasListener` in 0.1.0; remove in 0.2.0.  
+**Decision:** Add `phly/phly-event-dispatcher` as a `require` dependency and provide `Psr3LogPsr14Listener`. PSR-14 is now the only supported dispatch path: `Psr3LogLaminasListener` was deprecated in 0.1.0 and has been removed, along with `laminas/laminas-eventmanager`.  
 **Consequences:** Applications gain a standards-compliant event-driven logging path. Any PSR-14 dispatcher can be substituted. `LogEvent` becomes a plain PHP class implementing `StoppableEventInterface` rather than a Laminas-specific subclass.
 
 ### ADR-003: UUID v7 for Record Identification
@@ -786,7 +744,5 @@ Full scope defined in [plan/refactor-webware-log-0.1.0.md](../plan/refactor-webw
 
 ### 0.2.0 (Tentative)
 
-- Remove `Psr3LogLaminasListener` entirely
-- Drop `laminas/laminas-eventmanager` from `require-dev`
 - Evaluate standardizing on `PhpDbHandler` only as `laminas-db` moves further into security-only status
 - Install **PCOV** in `docker/php/Dockerfile` for local coverage support; integration tests currently run with `--no-coverage` since coverage is handled in CI pipeline

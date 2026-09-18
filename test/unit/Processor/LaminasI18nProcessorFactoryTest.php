@@ -14,9 +14,11 @@ declare(strict_types=1);
 
 namespace WebwareTest\Log\Processor;
 
-use Laminas\I18n\Translator\TranslatorInterface as I18nTranslatorInterface;
+use DateTimeImmutable;
 use Laminas\ServiceManager\Exception\ServiceNotFoundException;
 use Laminas\Translator\TranslatorInterface;
+use Monolog\Level;
+use Monolog\LogRecord;
 use PHPUnit\Framework\Attributes\CoversClass;
 use PHPUnit\Framework\Attributes\CoversMethod;
 use PHPUnit\Framework\Attributes\Test;
@@ -39,8 +41,13 @@ final class LaminasI18nProcessorFactoryTest extends TestCase
     #[Test]
     public function invokeReturnsLaminasI18nProcessorWhenTranslatorPresent(): void
     {
-        $translator = $this->createStub(I18nTranslatorInterface::class);
-        $container  = $this->createStub(ContainerInterface::class);
+        $translator = $this->createMock(TranslatorInterface::class);
+        $translator->expects($this->once())
+            ->method('translate')
+            ->with('Hello world')
+            ->willReturn('Hola mundo');
+
+        $container = $this->createStub(ContainerInterface::class);
 
         $container->method('has')
             ->willReturnCallback(
@@ -56,7 +63,15 @@ final class LaminasI18nProcessorFactoryTest extends TestCase
         $result  = $factory($container);
 
         $this->assertInstanceOf(LaminasI18nProcessor::class, $result);
-        $this->assertSame($translator, $result->getTranslator());
+
+        $record = new LogRecord(
+            datetime: new DateTimeImmutable(),
+            channel : 'test',
+            level   : Level::Info,
+            message : 'Hello world',
+        );
+
+        $this->assertSame('Hola mundo', $result($record)->message);
     }
 
     /**

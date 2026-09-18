@@ -65,7 +65,3 @@ return [
 ```
 
 Higher priority values run first. The built-in `Psr3LogPsr14Listener` is registered at priority `1`.
-
-## Laminas EventManager Bridge (Deprecated)
-
-`Psr3LogLaminasListener` bridges the Laminas EventManager to PSR-3. It is **deprecated as of 0.1.0** and will be removed in 0.2.0. Migrate to `LogEvent` + PSR-14 dispatch instead.
