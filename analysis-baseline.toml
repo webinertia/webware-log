@@ -15,7 +15,7 @@ count = 1
 [[issues]]
 file = "src/ConfigProvider.php"
 code = "invalid-return-statement"
-message = '''Invalid return type for function `Webware\Log\ConfigProvider::getDependencies`: expected `array{'aliases': array{Psr\EventDispatcher\EventDispatcherInterface::class: class-string, Psr\EventDispatcher\ListenerProviderInterface::class: class-string}, 'delegators': array{Laminas\Stratigility\Middleware\ErrorHandler::class: list<class-string>}, 'factories': array{Phly\EventDispatcher\ListenerProvider\ListenerProviderAggregate::class: class-string, Psr\Log\LoggerInterface::class: class-string, Webware\Log\LaminasI18nProcessor::class: class-string, Webware\Log\MonologMiddleware::class: class-string, Webware\Log\PhpDbHandler::class: class-string, Webware\Log\Psr3LogLaminasListener::class: class-string, Webware\Log\Psr3LogPsr14Listener::class: class-string}, 'invokables': array{Phly\EventDispatcher\ListenerProvider\AttachableListenerProvider::class: class-string, Phly\EventDispatcher\ListenerProvider\PrioritizedListenerProvider::class: class-string, Webware\Log\RamseyUuidProcessor::class: class-string}}`, but found `array{'aliases': array{'Psr\EventDispatcher\EventDispatcherInterface': class-string('Phly\EventDispatcher\EventDispatcher'), 'Psr\EventDispatcher\ListenerProviderInterface': class-string('Phly\EventDispatcher\ListenerProvider\ListenerProviderAggregate')}, 'delegators': array{'Laminas\Stratigility\Middleware\ErrorHandler': list{class-string('Webware\Log\Container\MezzioErrorHandlerDelegator')}}, 'factories': array{'Phly\EventDispatcher\ListenerProvider\ListenerProviderAggregate': class-string('Webware\Log\Container\ListenerProviderAggregateFactory'), 'Psr\Log\LoggerInterface': class-string('Webware\Log\Container\LogFactory'), 'Webware\Log\Handler\PhpDbHandler': class-string('Webware\Log\Handler\PhpDbHandlerFactory'), 'Webware\Log\Listener\Psr3LogLaminasListener': class-string('Webware\Log\Listener\Psr3LogLaminasListenerFactory'), 'Webware\Log\Listener\Psr3LogPsr14Listener': class-string('Webware\Log\Listener\Psr3LogPsr14ListenerFactory'), 'Webware\Log\Middleware\MonologMiddleware': class-string('Webware\Log\Middleware\MonologMiddlewareFactory'), 'Webware\Log\Processor\LaminasI18nProcessor': class-string('Webware\Log\Processor\LaminasI18nProcessorFactory')}, 'invokables': array{'Phly\EventDispatcher\ListenerProvider\AttachableListenerProvider': class-string('Phly\EventDispatcher\ListenerProvider\AttachableListenerProvider'), 'Phly\EventDispatcher\ListenerProvider\PrioritizedListenerProvider': class-string('Phly\EventDispatcher\ListenerProvider\PrioritizedListenerProvider'), 'Webware\Log\Processor\RamseyUuidProcessor': class-string('Webware\Log\Processor\RamseyUuidProcessor')}}`.'''
+message = '''Invalid return type for function `Webware\Log\ConfigProvider::getDependencies`: expected `array{'aliases': array{Psr\EventDispatcher\EventDispatcherInterface::class: class-string, Psr\EventDispatcher\ListenerProviderInterface::class: class-string}, 'delegators': array{Laminas\Stratigility\Middleware\ErrorHandler::class: list<class-string>}, 'factories': array{Phly\EventDispatcher\ListenerProvider\ListenerProviderAggregate::class: class-string, Psr\Log\LoggerInterface::class: class-string, Webware\Log\LaminasI18nProcessor::class: class-string, Webware\Log\MonologMiddleware::class: class-string, Webware\Log\PhpDbHandler::class: class-string, Webware\Log\Psr3LogLaminasListener::class: class-string, Webware\Log\Psr3LogPsr14Listener::class: class-string}, 'invokables': array{Phly\EventDispatcher\ListenerProvider\AttachableListenerProvider::class: class-string, Phly\EventDispatcher\ListenerProvider\PrioritizedListenerProvider::class: class-string, Webware\Log\RamseyUuidProcessor::class: class-string}}`, but found `array{'aliases': array{'Psr\EventDispatcher\EventDispatcherInterface': class-string('Phly\EventDispatcher\EventDispatcher'), 'Psr\EventDispatcher\ListenerProviderInterface': class-string('Phly\EventDispatcher\ListenerProvider\ListenerProviderAggregate')}, 'delegators': array{'Laminas\Stratigility\Middleware\ErrorHandler': list{class-string('Webware\Log\Container\MezzioErrorHandlerDelegator')}}, 'factories': array{'Phly\EventDispatcher\ListenerProvider\ListenerProviderAggregate': class-string('Webware\Log\Container\ListenerProviderAggregateFactory'), 'Psr\Log\LoggerInterface': class-string('Webware\Log\Container\LogFactory'), 'Webware\Log\Handler\PhpDbHandler': class-string('Webware\Log\Handler\PhpDbHandlerFactory'), 'Webware\Log\Http\Middleware\MonologMiddleware': class-string('Webware\Log\Http\Middleware\Container\MonologMiddlewareFactory'), 'Webware\Log\Listener\Psr3LogLaminasListener': class-string('Webware\Log\Listener\Psr3LogLaminasListenerFactory'), 'Webware\Log\Listener\Psr3LogPsr14Listener': class-string('Webware\Log\Listener\Psr3LogPsr14ListenerFactory'), 'Webware\Log\Processor\LaminasI18nProcessor': class-string('Webware\Log\Processor\LaminasI18nProcessorFactory')}, 'invokables': array{'Phly\EventDispatcher\ListenerProvider\AttachableListenerProvider': class-string('Phly\EventDispatcher\ListenerProvider\AttachableListenerProvider'), 'Phly\EventDispatcher\ListenerProvider\PrioritizedListenerProvider': class-string('Phly\EventDispatcher\ListenerProvider\PrioritizedListenerProvider'), 'Webware\Log\Processor\RamseyUuidProcessor': class-string('Webware\Log\Processor\RamseyUuidProcessor')}}`.'''
 count = 1
 
 [[issues]]
@@ -109,6 +109,30 @@ message = '''Impossible `isset` check on key `'Psr\Log\LoggerInterface'` accesse
 count = 1
 
 [[issues]]
+file = "src/Http/Middleware/Container/MonologMiddlewareFactory.php"
+code = "class-must-be-final"
+message = 'Class `Webware\Log\Http\Middleware\Container\MonologMiddlewareFactory` should be declared `final`.'
+count = 1
+
+[[issues]]
+file = "src/Http/Middleware/Container/MonologMiddlewareFactory.php"
+code = "impossible-nonnull-entry-check"
+message = '''Impossible `isset` check on key `'Psr\Log\LoggerInterface'` accessed on `array{Psr\Log\LoggerInterface::class?: array{'auth_attribute': string, 'channel': string, 'log_errors': bool, 'process_translation': bool, 'process_uuid': bool, 'table': string}}`.'''
+count = 1
+
+[[issues]]
+file = "src/Http/Middleware/Container/MonologMiddlewareFactory.php"
+code = "redundant-null-coalesce"
+message = "Redundant null coalesce: left-hand side is always `null`."
+count = 1
+
+[[issues]]
+file = "src/Http/Middleware/MonologMiddleware.php"
+code = "class-must-be-final"
+message = 'Class `Webware\Log\Http\Middleware\MonologMiddleware` should be declared `final`.'
+count = 1
+
+[[issues]]
 file = "src/Listener/Psr3LogLaminasListener.php"
 code = "mixed-assignment"
 message = "Assigning `mixed` type to a variable may lead to unexpected behavior."
@@ -118,28 +142,4 @@ count = 2
 file = "src/Listener/Psr3LogLaminasListenerFactory.php"
 code = "deprecated-class"
 message = 'Class `Webware\Log\Listener\Psr3LogLaminasListener` is deprecated and should no longer be used.'
-count = 1
-
-[[issues]]
-file = "src/Middleware/MonologMiddleware.php"
-code = "class-must-be-final"
-message = 'Class `Webware\Log\Middleware\MonologMiddleware` should be declared `final`.'
-count = 1
-
-[[issues]]
-file = "src/Middleware/MonologMiddlewareFactory.php"
-code = "class-must-be-final"
-message = 'Class `Webware\Log\Middleware\MonologMiddlewareFactory` should be declared `final`.'
-count = 1
-
-[[issues]]
-file = "src/Middleware/MonologMiddlewareFactory.php"
-code = "impossible-nonnull-entry-check"
-message = '''Impossible `isset` check on key `'Psr\Log\LoggerInterface'` accessed on `array{Psr\Log\LoggerInterface::class?: array{'auth_attribute': string, 'channel': string, 'log_errors': bool, 'process_translation': bool, 'process_uuid': bool, 'table': string}}`.'''
-count = 1
-
-[[issues]]
-file = "src/Middleware/MonologMiddlewareFactory.php"
-code = "redundant-null-coalesce"
-message = "Redundant null coalesce: left-hand side is always `null`."
 count = 1

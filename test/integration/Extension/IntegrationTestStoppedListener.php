@@ -33,7 +33,7 @@ final class IntegrationTestStoppedListener implements FinishedSubscriber
     {
         if (
             $event->testSuite()->name() !== 'integration test'
-                || empty($this->fixtureLoaders)
+            || empty($this->fixtureLoaders)
         ) {
             return;
         }

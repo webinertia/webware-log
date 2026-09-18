@@ -12,7 +12,7 @@ declare(strict_types=1);
  * file that was distributed with this source code.
  */
 
-namespace WebwareTest\Log\Middleware;
+namespace WebwareTest\Log\Http\Middleware;
 
 use DateTimeImmutable;
 use Mezzio\Authentication\UserInterface;
@@ -28,7 +28,7 @@ use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
 use Psr\Http\Server\RequestHandlerInterface;
 use Psr\Log\LoggerInterface;
-use Webware\Log\Middleware\MonologMiddleware;
+use Webware\Log\Http\Middleware\MonologMiddleware;
 
 #[CoversClass(MonologMiddleware::class)]
 #[CoversMethod(MonologMiddleware::class, 'process')]
