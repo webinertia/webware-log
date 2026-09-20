@@ -23,8 +23,8 @@ use Psr\Container\ContainerExceptionInterface;
 use Psr\Container\ContainerInterface;
 use Psr\Container\NotFoundExceptionInterface;
 use Psr\Log\LoggerInterface;
+use Webware\Log\Listener\Container\Psr3LogPsr14ListenerFactory;
 use Webware\Log\Listener\Psr3LogPsr14Listener;
-use Webware\Log\Listener\Psr3LogPsr14ListenerFactory;
 
 #[CoversClass(Psr3LogPsr14ListenerFactory::class)]
 #[CoversMethod(Psr3LogPsr14ListenerFactory::class, '__invoke')]

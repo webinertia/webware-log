@@ -105,7 +105,7 @@ class ConfigProvider
             'factories'  => [
                 ListenerProviderAggregate::class => Container\ListenerProviderAggregateFactory::class,
 
-                Listener\Psr3LogPsr14Listener::class     => Listener\Psr3LogPsr14ListenerFactory::class,
+                Listener\Psr3LogPsr14Listener::class     => Listener\Container\Psr3LogPsr14ListenerFactory::class,
                 LoggerInterface::class                   => Container\LogFactory::class,
                 Http\Middleware\MonologMiddleware::class => Http\Middleware\Container\MonologMiddlewareFactory::class,
                 Handler\PhpDbHandler::class              => Handler\PhpDbHandlerFactory::class,
