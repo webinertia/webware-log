@@ -12,13 +12,14 @@ declare(strict_types=1);
  * file that was distributed with this source code.
  */
 
-namespace Webware\Log\Listener;
+namespace Webware\Log\Listener\Container;
 
 use Monolog\Logger;
 use Psr\Container\ContainerExceptionInterface;
 use Psr\Container\ContainerInterface;
 use Psr\Container\NotFoundExceptionInterface;
 use Psr\Log\LoggerInterface;
+use Webware\Log\Listener\Psr3LogPsr14Listener;
 
 final class Psr3LogPsr14ListenerFactory
 {

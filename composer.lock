@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "1ca57f5cc5a7bb85cdf8b15e0a7e8be0",
+    "content-hash": "cc25ff80e3ba9b058ac012187b23610f",
     "packages": [
         {
             "name": "brick/math",
@@ -11331,16 +11331,16 @@
         },
         {
             "name": "webware/webware-tools",
-            "version": "0.1.x-dev",
+            "version": "1.0.0-beta.2",
             "source": {
                 "type": "git",
                 "url": "https://github.com/webinertia/webware-tools.git",
-                "reference": "4bbac23fe83771572a855f7ce5729eb8959ecb4c"
+                "reference": "8c4deefee3e09ff30d2af3fde6250045134dfa4e"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/webinertia/webware-tools/zipball/4bbac23fe83771572a855f7ce5729eb8959ecb4c",
-                "reference": "4bbac23fe83771572a855f7ce5729eb8959ecb4c",
+                "url": "https://api.github.com/repos/webinertia/webware-tools/zipball/8c4deefee3e09ff30d2af3fde6250045134dfa4e",
+                "reference": "8c4deefee3e09ff30d2af3fde6250045134dfa4e",
                 "shasum": ""
             },
             "require": {
@@ -11349,7 +11349,6 @@
             "require-dev": {
                 "roave/security-advisories": "dev-master"
             },
-            "default-branch": true,
             "type": "library",
             "autoload": {
                 "psr-4": {
@@ -11375,17 +11374,16 @@
             ],
             "support": {
                 "issues": "https://github.com/webinertia/webware-tools/issues",
-                "source": "https://github.com/webinertia/webware-tools/tree/0.1.x"
+                "source": "https://github.com/webinertia/webware-tools/tree/1.0.0-beta.2"
             },
-            "time": "2026-09-16T11:23:54+00:00"
+            "time": "2026-09-20T01:24:50+00:00"
         }
     ],
     "aliases": [],
     "minimum-stability": "dev",
     "stability-flags": {
         "php-db/phpdb-mysql": 20,
-        "roave/security-advisories": 20,
-        "webware/webware-tools": 20
+        "roave/security-advisories": 20
     },
     "prefer-stable": true,
     "prefer-lowest": false,
