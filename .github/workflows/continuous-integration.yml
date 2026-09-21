@@ -16,7 +16,7 @@ on:
 
 jobs:
   qa:
-    uses: webinertia/webware-tools/.github/workflows/continuous-integration.yml@0.1.x
+    uses: webinertia/webware-tools/.github/workflows/continuous-integration.yml@1.0.x
     # CODECOV_TOKEN (org-wide) and INFECTION_DASHBOARD_API_KEY (per-repo) both
     # come through here, whichever scope actually defines each one.
     secrets: inherit
