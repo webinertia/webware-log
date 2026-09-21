@@ -38,9 +38,6 @@ services:
         # in sync with the package's supported PHP versions and
         # `config.platform.php`.
         PHP_VERSION: "8.4.24"
-        # Keep in sync with the central mago.toml `version =` pin in
-        # webware/webware-tools.
-        MAGO_VERSION: "1.47.3"
     # Keep the container alive so `docker compose exec` can attach to it.
     # (VS Code Dev Containers override this with their own command.)
     command: sleep infinity

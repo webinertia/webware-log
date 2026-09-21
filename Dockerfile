@@ -31,10 +31,6 @@ FROM composer:${COMPOSER_VERSION} AS composer
 
 FROM php:${PHP_VERSION}-cli
 
-# Mago version to install. Keep in sync with the central `mago.toml`
-# `version =` pin in webware/webware-tools.
-ARG MAGO_VERSION=1.47.3
-
 # ---------------------------------------------------------------------------
 # System packages + PHP extensions
 # ---------------------------------------------------------------------------
@@ -83,10 +79,18 @@ RUN set -eux; \
 COPY --from=composer /usr/bin/composer /usr/bin/composer
 
 # ---------------------------------------------------------------------------
-# Mago (statically linked Rust binary). Select the correct release asset for
-# the build target architecture so the same Dockerfile works on x86_64 and
-# arm64 hosts.
+# Mago (statically linked Rust binary).
+#
+# The version is NOT pinned in this file. It is read from the `version =` pin in
+# webware/webware-tools/mago.toml, resolved at the exact revision this
+# repository's composer.lock requires -- so the tool inside the container always
+# matches the pin the package's own config (which `extends` the centre
+# mago.toml) enforces. That pin has exactly one home: webware/webware-tools.
+#
+# The release asset is selected for the build target architecture so the same
+# Dockerfile works on x86_64 and arm64 hosts.
 # ---------------------------------------------------------------------------
+COPY composer.lock /tmp/composer.lock
 ARG TARGETARCH
 RUN set -eux; \
     case "${TARGETARCH}" in \
@@ -94,12 +98,25 @@ RUN set -eux; \
         arm64) MAGO_TRIPLE="aarch64-unknown-linux-gnu" ;; \
         *) echo "unsupported TARGETARCH: ${TARGETARCH}" >&2; exit 1 ;; \
     esac; \
+    WEBWARE_TOOLS_REV="$(php -r '$lock = json_decode(file_get_contents("/tmp/composer.lock"), true, 512, JSON_THROW_ON_ERROR); foreach (array_merge($lock["packages"] ?? [], $lock["packages-dev"] ?? []) as $package) { if (($package["name"] ?? "") === "webware/webware-tools") { echo $package["source"]["reference"] ?? ""; break; } }')"; \
+    if [ -z "${WEBWARE_TOOLS_REV}" ]; then \
+        echo "composer.lock does not pin webware/webware-tools" >&2; \
+        exit 1; \
+    fi; \
+    curl -fsSL \
+        "https://raw.githubusercontent.com/webinertia/webware-tools/${WEBWARE_TOOLS_REV}/mago.toml" \
+        -o /tmp/webware-tools-mago.toml; \
+    MAGO_VERSION="$(sed -nE 's/^[[:space:]]*version[[:space:]]*=[[:space:]]*"([0-9]+\.[0-9]+\.[0-9]+)".*/\1/p' /tmp/webware-tools-mago.toml | head -n1)"; \
+    if [ -z "${MAGO_VERSION}" ]; then \
+        echo "no version pin in webware-tools/mago.toml at ${WEBWARE_TOOLS_REV}" >&2; \
+        exit 1; \
+    fi; \
     curl -fsSL \
         "https://github.com/carthage-software/mago/releases/download/${MAGO_VERSION}/mago-${MAGO_VERSION}-${MAGO_TRIPLE}.tar.gz" \
         -o /tmp/mago.tar.gz; \
     tar -xzf /tmp/mago.tar.gz -C /tmp; \
     install -m 0755 "/tmp/mago-${MAGO_VERSION}-${MAGO_TRIPLE}/mago" /usr/local/bin/mago; \
-    rm -rf /tmp/mago.tar.gz "/tmp/mago-${MAGO_VERSION}-${MAGO_TRIPLE}"; \
+    rm -rf /tmp/mago.tar.gz "/tmp/mago-${MAGO_VERSION}-${MAGO_TRIPLE}" /tmp/composer.lock /tmp/webware-tools-mago.toml; \
     mago --version
 
 WORKDIR /app
