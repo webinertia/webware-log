@@ -1,4 +1,4 @@
-#:schema https://mago.carthage.software/1.47.3/schema.json
+#:schema https://mago.carthage.software/latest/schema.json
 extends = "vendor/webware/webware-tools/mago.toml"
 php-version = "8.4.1"
 
