@@ -11331,16 +11331,16 @@
         },
         {
             "name": "webware/webware-tools",
-            "version": "1.0.0-beta.2",
+            "version": "1.0.0-beta.3",
             "source": {
                 "type": "git",
                 "url": "https://github.com/webinertia/webware-tools.git",
-                "reference": "8c4deefee3e09ff30d2af3fde6250045134dfa4e"
+                "reference": "3e15ead21117938e73e31b309b879c9f1d2de9d0"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/webinertia/webware-tools/zipball/8c4deefee3e09ff30d2af3fde6250045134dfa4e",
-                "reference": "8c4deefee3e09ff30d2af3fde6250045134dfa4e",
+                "url": "https://api.github.com/repos/webinertia/webware-tools/zipball/3e15ead21117938e73e31b309b879c9f1d2de9d0",
+                "reference": "3e15ead21117938e73e31b309b879c9f1d2de9d0",
                 "shasum": ""
             },
             "require": {
@@ -11350,11 +11350,6 @@
                 "roave/security-advisories": "dev-master"
             },
             "type": "library",
-            "autoload": {
-                "psr-4": {
-                    "Webware\\Tools\\": "src/"
-                }
-            },
             "notification-url": "https://packagist.org/downloads/",
             "license": [
                 "BSD-3-Clause"
@@ -11374,9 +11369,9 @@
             ],
             "support": {
                 "issues": "https://github.com/webinertia/webware-tools/issues",
-                "source": "https://github.com/webinertia/webware-tools/tree/1.0.0-beta.2"
+                "source": "https://github.com/webinertia/webware-tools/tree/1.0.0-beta.3"
             },
-            "time": "2026-09-20T01:24:50+00:00"
+            "time": "2026-09-21T21:34:06+00:00"
         }
     ],
     "aliases": [],
