@@ -82,7 +82,11 @@ final class LogSchemaTest extends TestCase
     #[Test]
     public function logTableRendersTheExactStatement(): void
     {
-        $sql = (string) preg_replace('/\s+/', ' ', $this->renderSql(new LogSchema()->logTable('log')));
+        $sql = (string) preg_replace(
+            pattern    : '/\s+/',
+            replacement: ' ',
+            subject    : $this->renderSql(new LogSchema()->logTable('log')),
+        );
 
         self::assertSame(
             'CREATE TABLE IF NOT EXISTS `log` ( '
