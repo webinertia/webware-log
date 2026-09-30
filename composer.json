@@ -54,10 +54,12 @@
         "phpunit/phpunit": "^13.3.0",
         "roave/backward-compatibility-check": "^8.21.0",
         "roave/security-advisories": "dev-master",
+        "webware/webware-console": "1.0.x-dev",
         "webware/webware-tools": "^1.0.0-beta.2"
     },
     "suggest": {
-        "php-db/phpdb-mysql": "Required when using PhpDbHandler with a MySQL/MariaDB database"
+        "php-db/phpdb-mysql": "Required when using PhpDbHandler with a MySQL/MariaDB database",
+        "webware/webware-console": "Provides the console that runs log:init-db to create the log table"
     },
     "extra": {
         "laminas": {

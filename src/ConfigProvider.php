@@ -23,6 +23,7 @@ use Phly\EventDispatcher\ListenerProvider\PrioritizedListenerProvider;
 use Psr\EventDispatcher\EventDispatcherInterface;
 use Psr\EventDispatcher\ListenerProviderInterface;
 use Psr\Log\LoggerInterface;
+use Webware\Console\ConsoleInterface;
 
 /**
  * @phpstan-type LogDefaults array{
@@ -46,6 +47,7 @@ use Psr\Log\LoggerInterface;
  *     LoggerInterface::class: class-string,
  *     Http\Middleware\MonologMiddleware::class: class-string,
  *     Handler\PhpDbHandler::class: class-string,
+ *     Console\InitDbCommand::class: class-string,
  *     Processor\LaminasI18nProcessor::class: class-string,
  * }
  * @phpstan-type LogInvokables array{
@@ -68,6 +70,7 @@ use Psr\Log\LoggerInterface;
  *     listener_providers: array<empty>,
  *     templates: LogTemplatePaths,
  *     LoggerInterface::class: LogDefaults,
+ *     ConsoleInterface::class: array{commands: array<string, class-string>},
  * }
  */
 class ConfigProvider
@@ -109,6 +112,7 @@ class ConfigProvider
                 LoggerInterface::class                   => Container\LogFactory::class,
                 Http\Middleware\MonologMiddleware::class => Http\Middleware\Container\MonologMiddlewareFactory::class,
                 Handler\PhpDbHandler::class              => Handler\PhpDbHandlerFactory::class,
+                Console\InitDbCommand::class             => Console\Container\InitDbCommandFactory::class,
                 Processor\LaminasI18nProcessor::class    => Processor\LaminasI18nProcessorFactory::class,
             ],
             'invokables' => [
@@ -160,8 +164,13 @@ class ConfigProvider
             self::LISTENER_KEY          => $this->getListeners(),
             self::LISTENER_PROVIDER_KEY => [],
             // 'middleware_pipeline' => $this->getPipelineConfig(),
-            'templates'            => $this->getTemplates(),
-            LoggerInterface::class => $this->getConfigDefaults(),
+            'templates'             => $this->getTemplates(),
+            LoggerInterface::class  => $this->getConfigDefaults(),
+            ConsoleInterface::class => [
+                'commands' => [
+                    'log:init-db' => Console\InitDbCommand::class,
+                ],
+            ],
         ];
     }
 }
