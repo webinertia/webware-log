@@ -22,7 +22,10 @@ use PHPUnit\Framework\TestCase;
 use Psr\EventDispatcher\EventDispatcherInterface;
 use Psr\EventDispatcher\ListenerProviderInterface;
 use Psr\Log\LoggerInterface;
+use Webware\Console\ConsoleInterface;
 use Webware\Log\ConfigProvider;
+use Webware\Log\Console\Container\InitDbCommandFactory;
+use Webware\Log\Console\InitDbCommand;
 use Webware\Log\Event\LogEvent;
 use Webware\Log\Listener\Psr3LogPsr14Listener;
 use Webware\Log\LogChannel;
@@ -112,6 +115,17 @@ final class ConfigProviderTest extends TestCase
      * @throws \PHPUnit\Exception
      */
     #[Test]
+    public function getDependenciesRegistersTheInitDbCommandFactory(): void
+    {
+        $deps = $this->provider->getDependencies();
+
+        $this->assertSame(InitDbCommandFactory::class, $deps['factories'][InitDbCommand::class]);
+    }
+
+    /**
+     * @throws \PHPUnit\Exception
+     */
+    #[Test]
     public function getListenersPsr14ListenerHasPriority(): void
     {
         $listeners = $this->provider->getListeners();
@@ -185,6 +199,20 @@ final class ConfigProviderTest extends TestCase
         $config = ($this->provider)();
 
         $this->assertSame($this->provider->getConfigDefaults(), $config[LoggerInterface::class]);
+    }
+
+    /**
+     * @throws \PHPUnit\Exception
+     */
+    #[Test]
+    public function invokeRegistersTheLogInitDbCommandForConsoleDiscovery(): void
+    {
+        $config = ($this->provider)();
+
+        $this->assertSame(
+            ['commands' => ['log:init-db' => InitDbCommand::class]],
+            $config[ConsoleInterface::class],
+        );
     }
 
     /**
