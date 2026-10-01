@@ -29,7 +29,7 @@
 
     <php>
         <env name="TESTS_ADAPTER_MYSQL" value="true"/>
-        <env name="TESTS_ADAPTER_MYSQL_HOSTNAME" value="mysql"/>
+        <env name="TESTS_ADAPTER_MYSQL_HOSTNAME" value="127.0.0.1"/>
         <env name="TESTS_ADAPTER_MYSQL_USERNAME" value="root"/>
         <env name="TESTS_ADAPTER_MYSQL_PASSWORD" value=""/>
         <env name="TESTS_ADAPTER_MYSQL_DATABASE" value="webware_log_test"/>
