@@ -76,7 +76,7 @@ final class LogSchemaTest extends TestCase
         self::assertInstanceOf(Literal::class, $options['engine']);
         self::assertSame('InnoDB', $options['engine']->getLiteral());
         self::assertSame('utf8mb4', $options['default charset']->getLiteral());
-        self::assertSame('utf8mb4_general_ci', $options['collate']->getLiteral());
+        self::assertSame('utf8mb4_0900_ai_ci', $options['collate']->getLiteral());
     }
 
     #[Test]
@@ -101,7 +101,7 @@ final class LogSchemaTest extends TestCase
                 . 'PRIMARY KEY (`id`), '
                 . 'CONSTRAINT `uuid` UNIQUE (`uuid`), '
                 . 'INDEX `ChannelIndex`(`channel`) '
-                . ') ENGINE = InnoDB DEFAULT CHARSET = utf8mb4 COLLATE = utf8mb4_general_ci',
+                . ') ENGINE = InnoDB DEFAULT CHARSET = utf8mb4 COLLATE = utf8mb4_0900_ai_ci',
             $sql,
         );
     }
@@ -123,7 +123,7 @@ final class LogSchemaTest extends TestCase
         self::assertStringContainsString('UNIQUE', $sql);
         self::assertStringContainsString('ChannelIndex', $sql);
         self::assertStringContainsString('ENGINE = InnoDB', $sql);
-        self::assertStringContainsString('utf8mb4_general_ci', $sql);
+        self::assertStringContainsString('utf8mb4_0900_ai_ci', $sql);
     }
 
     #[Test]
