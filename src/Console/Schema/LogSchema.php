@@ -102,7 +102,7 @@ final class LogSchema
         $createTable->setOptions(options: [
             'engine'          => new Literal(literal: 'InnoDB'),
             'default charset' => new Literal(literal: 'utf8mb4'),
-            'collate'         => new Literal(literal: 'utf8mb4_general_ci'),
+            'collate'         => new Literal(literal: 'utf8mb4_0900_ai_ci'),
         ]);
 
         return $createTable;
