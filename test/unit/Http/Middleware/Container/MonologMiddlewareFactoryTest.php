@@ -52,7 +52,7 @@ final class MonologMiddlewareFactoryTest extends TestCase
         $factory    = new MonologMiddlewareFactory();
         $middleware = $factory($container);
 
-        // The default auth_attribute should be UserInterface::class — verify the
+        // The default auth_attribute should be UserInterface::class - verify the
         // middleware was constructed without throwing.
         $this->assertInstanceOf(MonologMiddleware::class, $middleware);
     }

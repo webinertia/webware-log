@@ -1,7 +1,7 @@
-# Project Architecture Blueprint — `webware/webware-log`
+# Project Architecture Blueprint: `webware/webware-log`
 
 > **Current stable:** 0.0.x (branch: `add-phpdb-handler`)  
-> **Next target:** 0.1.0 — see [Roadmap](#14-roadmap--version-scope) for planned changes  
+> **Next target:** 0.1.0 - see [Roadmap](#14-roadmap--version-scope) for planned changes
 > **License:** BSD-3-Clause  
 > **PHP requirement:** ~8.4.0 || ~8.5.0 || ~8.6.0
 
@@ -36,7 +36,7 @@
 - Provides Monolog handlers that persist log records to a relational database using either `laminas-db` or `php-db/phpdb`.
 - Decorates Mezzio's built-in `ErrorHandler` so that uncaught exceptions are automatically logged.
 
-> **Note — Laminas MVC:** The Laminas team is retiring the MVC framework. All MVC-specific integration (`Runtime::Mvc`, `AbstractController` listener identifiers) was removed in 0.1.0, and the Laminas EventManager bridge listener has since been removed entirely — PSR-14 is the only supported dispatch path.
+> **Note - Laminas MVC:** The Laminas team is retiring the MVC framework. All MVC-specific integration (`Runtime::Mvc`, `AbstractController` listener identifiers) was removed in 0.1.0, and the Laminas EventManager bridge listener has since been removed entirely - PSR-14 is the only supported dispatch path.
 
 ### Guiding Principles
 
@@ -71,7 +71,7 @@
 
 ## 2. Architecture Visualization
 
-### C4 — Context Diagram
+### C4: Context Diagram
 
 ```
 ┌──────────────────────────────────────────────────────────────────────┐
@@ -90,7 +90,7 @@
 └──────────────────────────────────────────────────────────────────────┘
 ```
 
-### C4 — Component Diagram
+### C4: Component Diagram
 
 ```
 ┌─────────────────────────────────────────────────────────────────────────────┐
@@ -132,7 +132,7 @@
 └─────────────────────────────────────────────────────────────────────────────┘
 ```
 
-### Data Flow — Request Log Entry
+### Data Flow: Request Log Entry
 
 ```
 HTTP Request
@@ -156,7 +156,7 @@ LaminasDbHandler | PhpDbHandler .write(LogRecord)
 MySQL log table
 ```
 
-### Data Flow — PSR-14 Log Event
+### Data Flow: PSR-14 Log Event
 
 ```
 Handler / Middleware / Service
@@ -172,7 +172,7 @@ Psr3LogPsr14Listener.__invoke(LogEvent)
 Monolog\Logger.log()  →  handler chain  →  DB
 ```
 
-### Data Flow — Uncaught Exception
+### Data Flow: Uncaught Exception
 
 ```
 Mezzio ErrorHandler.process()
@@ -233,7 +233,7 @@ The root wiring class for the Laminas component installer. When invoked, it retu
 | `LogFactory` | Factory | `Monolog\Logger` as `LoggerInterface` | Pushes handlers and processors in order |
 | `MezzioErrorHandlerDelegator` | Delegator | `Laminas\Stratigility\Middleware\ErrorHandler` | Conditionally attaches `MezzioErrorListener` when `log_errors = true` |
 
-The delegator pattern means the error handler is extended non-destructively — if `log_errors` is `false`, the original handler is returned unmodified.
+The delegator pattern means the error handler is extended non-destructively - if `log_errors` is `false`, the original handler is returned unmodified.
 
 ---
 
@@ -367,7 +367,7 @@ CREATE TABLE `log` (
 
 ### UUID Strategy
 
-UUID v7 (time-ordered, monotonic) is used — generated per record using `ramsey/uuid` with the record's own `datetime`. This allows chronological sorting on the `uuid` column while maintaining global uniqueness.
+UUID v7 (time-ordered, monotonic) is used - generated per record using `ramsey/uuid` with the record's own `datetime`. This allows chronological sorting on the `uuid` column while maintaining global uniqueness.
 
 ---
 
@@ -408,7 +408,7 @@ The component itself does not log its own operations. Internal errors propagate 
 
 - `ConfigProvider` is the entry point for `laminas-component-installer`.
 - The `extra.laminas` key in `composer.json` identifies the component and its config-provider FQCN.
-- The component registers itself as a **library** (not an application) — it ships defaults that applications can override.
+- The component registers itself as a **library** (not an application) - it ships defaults that applications can override.
 
 ### 7.2 Mezzio Middleware Pipeline
 
@@ -435,9 +435,9 @@ The dispatcher calls `Psr3LogPsr14Listener::__invoke(LogEvent)`, which translate
 Handler and processor registration order in `LogFactory`:
 ```
 LaminasDbHandler | PhpDbHandler  ← handler (persists to DB)
-[RamseyUuidProcessor]            ← processor #1 (UUID v7) — guarded by process_uuid flag (0.1.0+)
+[RamseyUuidProcessor]            ← processor #1 (UUID v7) - guarded by process_uuid flag (0.1.0+)
 PsrLogMessageProcessor           ← processor #2 (interpolate placeholders)
-[LaminasI18nProcessor]           ← processor #3 (translate, optional) — guarded by process_translation flag
+[LaminasI18nProcessor]           ← processor #3 (translate, optional) - guarded by process_translation flag
 ```
 Monolog processes records in **LIFO** order for processors and passes through handler stack in registration order.
 
@@ -479,7 +479,7 @@ The `PhpDbHandler` is the current development focus (branch `add-phpdb-handler`)
 ### 8.2 Adding a New Processor
 
 1. Create `src/Processor/MyProcessor.php` implementing `Monolog\Processor\ProcessorInterface`.
-2. `__invoke(LogRecord $record): LogRecord` — enrich `$record->extra` and return `$record->with(extra: ...)`.
+2. `__invoke(LogRecord $record): LogRecord` - enrich `$record->extra` and return `$record->with(extra: ...)`.
 3. If container dependencies are needed, create `src/Processor/MyProcessorFactory.php`.
 4. Register as `invokables` (no deps) or `factories` (with deps) in `ConfigProvider`.
 5. Add `$logger->pushProcessor(...)` in `LogFactory`.
@@ -522,7 +522,7 @@ The `EventDispatcherInterface` is resolved from the container (provided by `phly
 ```
 test/
 ├── unit/
-│   └── TestAsset/          (shared test doubles — currently empty)
+│   └── TestAsset/          (shared test doubles - currently empty)
 └── integration/
     ├── Extension/
     │   ├── ListenerExtension.php         (PHPUnit bootstrap extension)
@@ -589,7 +589,7 @@ The `mysql.sql` fixture is auto-executed by MySQL's `docker-entrypoint-initdb.d`
 
 ### Runtime Dependency: DB Adapter
 
-This component requires a `Laminas\Db\Adapter\AdapterInterface` (for `LaminasDbHandler`) or `PhpDb\Adapter\AdapterInterface` (for `PhpDbHandler`) to be registered in the application container. These are not shipped with this component — the host application is responsible for configuring the DB adapter.
+This component requires a `Laminas\Db\Adapter\AdapterInterface` (for `LaminasDbHandler`) or `PhpDb\Adapter\AdapterInterface` (for `PhpDbHandler`) to be registered in the application container. These are not shipped with this component - the host application is responsible for configuring the DB adapter.
 
 ---
 
@@ -599,7 +599,7 @@ This component requires a `Laminas\Db\Adapter\AdapterInterface` (for `LaminasDbH
 
 1. Push `PhpDbHandler` onto the logger in `LogFactory` (optionally remove `LaminasDbHandler`).
 2. Update the DB schema: rename `userIdentifier` → `user_identifier` and add a `context JSON` column.
-3. Ensure the host application registers `PhpDb\Adapter\AdapterInterface::class` in the container via `php-db/phpdb`'s own config provider — **not** using laminas-db configuration structure; the two config structures are incompatible.
+3. Ensure the host application registers `PhpDb\Adapter\AdapterInterface::class` in the container via `php-db/phpdb`'s own config provider - **not** using laminas-db configuration structure; the two config structures are incompatible.
 4. Both adapters can coexist in the container under separate FQCN service IDs.
 
 ### 11.2 Adding a Non-DB Handler
@@ -607,7 +607,7 @@ This component requires a `Laminas\Db\Adapter\AdapterInterface` (for `LaminasDbH
 1. Registering it as a service in the DI container.
 2. Pushing it onto the logger in `LogFactory`.
 
-The handler stack in Monolog is ordered — add higher-priority handlers last (they are tried first).
+The handler stack in Monolog is ordered - add higher-priority handlers last (they are tried first).
 
 ### 11.4 Scoping Processors per Channel
 
@@ -685,7 +685,7 @@ test (phpunit unit suite)
 | Branch | Purpose |
 |---|---|
 | `0.0.x` | Default / stable release branch |
-| `add-phpdb-handler` | Active development — adds `PhpDbHandler` (merges to 0.0.x) |
+| `add-phpdb-handler` | Active development - adds `PhpDbHandler` (merges to 0.0.x) |
 | `0.1.x` _(planned)_ | Target for all 0.1.0 refactoring work |
 
 ### Known Technical Debt (0.0.x)
@@ -695,13 +695,13 @@ Items marked ✅ are addressed by the [0.1.0 refactoring plan](../plan/refactor-
 | Location | Issue | 0.1.0 |
 |---|---|---|
 | `LaminasDbHandler` | `Sql` re-created per `write()` call | ✅ TASK-025 |
-| `LaminasDbHandler` | Column named `userIdentifier` (camelCase) — inconsistent with `PhpDbHandler` | ✅ TASK-026 |
+| `LaminasDbHandler` | Column named `userIdentifier` (camelCase) - inconsistent with `PhpDbHandler` | ✅ TASK-026 |
 | `MonologMiddleware` | Hard-coded `UserInterface` attribute key | ✅ TASK-027 |
 | `LogEvent::getChannel()` | Instantiates `new ConfigProvider()` at runtime | ✅ TASK-007 |
 | `LogFactory` | `process_uuid` / `process_translation` flags not honoured | ✅ TASK-028 |
 | `phpunit.xml.dist` | Schema targets PHPUnit 11.4 but requirement is ^13.0 | ✅ TASK-029 |
-| `phpcs.xml` | Legacy PHP_CodeSniffer config — tool is not used; style enforced by `php-cs-fixer` | ✅ TASK-031 |
-| `psalm.xml.dist` / `psalm-baseline.xml` | Psalm config files — `vimeo/psalm` replaced by PHPStan | ✅ TASK-032 |
+| `phpcs.xml` | Legacy PHP_CodeSniffer config - tool is not used; style enforced by `php-cs-fixer` | ✅ TASK-031 |
+| `psalm.xml.dist` / `psalm-baseline.xml` | Psalm config files - `vimeo/psalm` replaced by PHPStan | ✅ TASK-032 |
 | `composer.json` scripts | `cs-check`/`cs-fix` pointed to phpcs/phpcbf; `static-analysis` pointed to `psalm` | ✅ TASK-033 |
 | `ConfigProvider` | Config key `ConfigProvider::class` should reflect what it configures | ✅ TASK-001 |
 | `Runtime::Mvc` | MVC case defined but never wired; Laminas MVC being retired | ✅ TASK-009 |
@@ -713,11 +713,11 @@ Items marked ✅ are addressed by the [0.1.0 refactoring plan](../plan/refactor-
 ### 0.0.x (Current)
 
 - Core PSR-3 / Monolog integration for Mezzio
-- `LaminasDbHandler` — persist log records via `laminas-db`
-- `PhpDbHandler` — persist log records via `php-db/phpdb` _(branch: `add-phpdb-handler`)_
-- `MezzioErrorHandlerDelegator` — automatic error logging
-- `MonologMiddleware` — user identity enrichment
-- `Psr3LogLaminasListener` — Laminas EventManager → PSR-3 bridge
+- `LaminasDbHandler` - persist log records via `laminas-db`
+- `PhpDbHandler` - persist log records via `php-db/phpdb` _(branch: `add-phpdb-handler`)_
+- `MezzioErrorHandlerDelegator` - automatic error logging
+- `MonologMiddleware` - user identity enrichment
+- `Psr3LogLaminasListener` - Laminas EventManager → PSR-3 bridge
 
 ### 0.1.0 (Planned)
 
