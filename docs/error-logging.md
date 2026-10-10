@@ -42,4 +42,4 @@ The error is logged at `ERROR` level with the exception, request, and response a
 
 - The `ErrorHandler` continues to generate its own error response as normal.
 - No exception is swallowed.
-- The delegator pattern means the `ErrorHandler` service ID in the container still resolves to the original `ErrorHandler` instance — only a listener is attached to it.
+- The delegator pattern means the `ErrorHandler` service ID in the container still resolves to the original `ErrorHandler` instance - only a listener is attached to it.

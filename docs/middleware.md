@@ -17,7 +17,7 @@ use Webware\Log\Http\Middleware\MonologMiddleware;
 $app->pipe(MonologMiddleware::class);
 ```
 
-**Config-driven pipeline** — uncomment the `middleware_pipeline` section in `ConfigProvider`:
+**Config-driven pipeline**: uncomment the `middleware_pipeline` section in `ConfigProvider`:
 
 ```php
 // src/ConfigProvider.php  (or your own config file)

@@ -30,7 +30,7 @@ Uses `laminas/laminas-db` to write records.
 By default the handler reads `extra.email` for the user column. Override via config:
 
 ```php
-// Not yet exposed as a top-level config key — override by extending
+// Not yet exposed as a top-level config key - override by extending
 // LaminasDbHandlerFactory and passing a different $extraAuthIdentifier
 // to the LaminasDbHandler constructor.
 ```

@@ -5,7 +5,7 @@
 #
 # Builds a self-contained, interactive PHP development environment carrying
 # the Webware toolchain: PHP CLI, Composer, Mago, and Xdebug. Developers work
-# inside this container — either through the VS Code Dev Container (backed by
+# inside this container: either through the VS Code Dev Container (backed by
 # compose.yml) or by `docker compose up -d` + `docker compose exec tooling`.
 # The host machine (Windows, WSL, Linux, or macOS) never needs a native PHP
 # toolchain.

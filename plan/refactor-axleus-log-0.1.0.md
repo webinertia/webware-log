@@ -1,5 +1,5 @@
 ---
-goal: Refactor webware-log to v0.1.0 — PSR-14 support, config key migration, MVC removal, dual DB adapter, and technical debt resolution
+goal: Refactor webware-log to v0.1.0 - PSR-14 support, config key migration, MVC removal, dual DB adapter, and technical debt resolution
 version: 0.1.0
 date_created: 2026-05-01
 last_updated: 2026-05-02
@@ -14,11 +14,11 @@ tags: [refactor, architecture, feature, chore]
 
 This plan covers all changes targeted for the `0.1.0` release of `webware/webware-log`. The changes fall into five areas:
 
-1. **Config key migration** — replace `ConfigProvider::class` as the top-level config array key with `LoggerInterface::class`.
-2. **Laminas MVC removal** — remove all MVC-specific integration code since the Laminas team is retiring the MVC framework.
-3. **PSR-14 event dispatcher support** — add `phly/phly-event-dispatcher` to bridge log events via the standards-compliant PSR-14 dispatcher alongside (and eventually replacing) the non-PSR-compliant Laminas EventManager bridge.
-4. **Dual DB adapter resolution** — consolidate factory container resolution so both `laminas-db` and `php-db/phpdb` adapters are resolved via `AdapterInterface::class`, with explicit documentation of phpdb's different configuration structure.
-5. **Technical debt resolution** — fix all known `// todo` items and configuration inconsistencies identified in the v0.0.x codebase.
+1. **Config key migration**: replace `ConfigProvider::class` as the top-level config array key with `LoggerInterface::class`.
+2. **Laminas MVC removal**: remove all MVC-specific integration code since the Laminas team is retiring the MVC framework.
+3. **PSR-14 event dispatcher support**: add `phly/phly-event-dispatcher` to bridge log events via the standards-compliant PSR-14 dispatcher alongside (and eventually replacing) the non-PSR-compliant Laminas EventManager bridge.
+4. **Dual DB adapter resolution**: consolidate factory container resolution so both `laminas-db` and `php-db/phpdb` adapters are resolved via `AdapterInterface::class`, with explicit documentation of phpdb's different configuration structure.
+5. **Technical debt resolution**: fix all known `// todo` items and configuration inconsistencies identified in the v0.0.x codebase.
 
 ---
 
@@ -40,14 +40,14 @@ This plan covers all changes targeted for the `0.1.0` release of `webware/webwar
 - **CON-004**: Breaking changes in config key and event system are acceptable for a minor version bump (0.0.x → 0.1.0). A CHANGELOG entry and migration note in the README are required.
 - **GUD-001**: All new classes must follow the `webware/coding-standard` rules enforced by `.php-cs-fixer.dist.php` (`@Webware/coding-standard-1.0` rule set via `php-cs-fixer`).
 - **GUD-002**: All new factories must follow the existing pattern: read `$config[LoggerInterface::class]` from the container's `config` service.
-- **PAT-001**: Constructor injection only — no service-locator usage inside domain classes.
+- **PAT-001**: Constructor injection only - no service-locator usage inside domain classes.
 - **PAT-002**: PSR-14 listener must be a standalone callable class, not a closure, to allow container resolution and testing.
 
 ---
 
 ## 2. Implementation Steps
 
-### Implementation Phase 1 — Config Key Migration
+### Implementation Phase 1: Config Key Migration
 
 - **GOAL-001**: Replace `ConfigProvider::class` with `LoggerInterface::class` as the top-level component config key in all source files.
 
@@ -64,7 +64,7 @@ This plan covers all changes targeted for the `0.1.0` release of `webware/webwar
 
 ---
 
-### Implementation Phase 2 — Remove Laminas MVC Integration
+### Implementation Phase 2: Remove Laminas MVC Integration
 
 - **GOAL-002**: Excise all Laminas MVC-specific code, leaving only Mezzio (PSR-15) integration.
 
@@ -78,7 +78,7 @@ This plan covers all changes targeted for the `0.1.0` release of `webware/webwar
 
 ---
 
-### Implementation Phase 3 — PSR-14 Event Dispatcher Support
+### Implementation Phase 3: PSR-14 Event Dispatcher Support
 
 - **GOAL-003**: Add a standards-compliant PSR-14 log event and listener using `phly/phly-event-dispatcher`.
 
@@ -94,7 +94,7 @@ This plan covers all changes targeted for the `0.1.0` release of `webware/webwar
 
 ---
 
-### Implementation Phase 4 — Dual DB Adapter Resolution
+### Implementation Phase 4: Dual DB Adapter Resolution
 
 - **GOAL-004**: Ensure both `LaminasDbHandler` and `PhpDbHandler` factories correctly resolve their respective `AdapterInterface` from the PSR-11 container without cross-contamination of config structures.
 
@@ -107,14 +107,14 @@ This plan covers all changes targeted for the `0.1.0` release of `webware/webwar
 
 ---
 
-### Implementation Phase 5 — Technical Debt Resolution
+### Implementation Phase 5: Technical Debt Resolution
 
 - **GOAL-005**: Resolve all `// todo` items and known inconsistencies identified in v0.0.x.
 
 | Task | Description | Completed | Date |
 |------|-------------|-----------|------|
 | TASK-025 | `src/Handler/LaminasDbHandler.php`: move `$sql = new Sql($this->adapterInterface, $this->table)` from `write()` into the constructor. Declare `private readonly Sql $sql` property. Remove the per-call instantiation. | | |
-| TASK-026 | `src/Handler/LaminasDbHandler.php`: rename column `userIdentifier` to `user_identifier` (snake_case) to align with `PhpDbHandler` and update `test/integration/TestFixtures/mysql.sql` fixture accordingly. This is a **breaking schema change** — document in CHANGELOG. | | |
+| TASK-026 | `src/Handler/LaminasDbHandler.php`: rename column `userIdentifier` to `user_identifier` (snake_case) to align with `PhpDbHandler` and update `test/integration/TestFixtures/mysql.sql` fixture accordingly. This is a **breaking schema change**: document in CHANGELOG. | | |
 | TASK-027 | `src/Middleware/MonologMiddleware.php`: resolve the `UserInterface` attribute key by reading `$config[LoggerInterface::class]['auth_attribute']` with a fallback to `Mezzio\Authentication\UserInterface::class`. Inject config via constructor. Create `MonologMiddlewareFactory` update to pass config. | | |
 | TASK-028 | `src/Container/LogFactory.php`: wrap `$logger->pushProcessor($uuidProcessor)` in an `if ($config['process_uuid'])` guard. Wrap the `LaminasI18nProcessor` push in an `if ($config['process_translation'])` guard (the existing container check can remain as an additional guard). | | |
 | TASK-029 | `phpunit.xml.dist`: update `xsi:noNamespaceSchemaLocation` from `https://schema.phpunit.de/11.4/phpunit.xsd` to `https://schema.phpunit.de/13.0/phpunit.xsd` to match the `phpunit/phpunit: ^13.0` requirement. | | |
@@ -127,61 +127,61 @@ This plan covers all changes targeted for the `0.1.0` release of `webware/webwar
 
 ## 3. Alternatives
 
-- **ALT-001**: Keep `ConfigProvider::class` as the config key and add `LoggerInterface::class` as an alias. Rejected — maintaining two keys adds complexity and the goal is a clean migration.
-- **ALT-002**: Keep `Runtime` enum and support MVC conditionally via feature flags. Rejected — the Laminas team is retiring MVC; continued support would be maintenance burden with no upstream future.
-- **ALT-003**: Replace `Psr3LogLaminasListener` entirely in 0.1.0 rather than deprecating. Rejected — some host applications may still dispatch via `Laminas\EventManager` in Mezzio contexts. Deprecation in 0.1.0 with full removal in 0.2.0 is safer.
-- **ALT-004**: Provide a single `DbHandlerFactory` that auto-detects the available adapter. Rejected — the two adapters have different config structures (phpdb does not use laminas-db config); auto-detection would silently select the wrong adapter. Explicit factories are unambiguous.
-- **ALT-005**: Use `ramsey/uuid` UUID v4 instead of v7. Rejected — UUID v7 is time-ordered, which improves B-tree index write performance on the `uuid` column.
+- **ALT-001**: Keep `ConfigProvider::class` as the config key and add `LoggerInterface::class` as an alias. Rejected - maintaining two keys adds complexity and the goal is a clean migration.
+- **ALT-002**: Keep `Runtime` enum and support MVC conditionally via feature flags. Rejected - the Laminas team is retiring MVC; continued support would be maintenance burden with no upstream future.
+- **ALT-003**: Replace `Psr3LogLaminasListener` entirely in 0.1.0 rather than deprecating. Rejected - some host applications may still dispatch via `Laminas\EventManager` in Mezzio contexts. Deprecation in 0.1.0 with full removal in 0.2.0 is safer.
+- **ALT-004**: Provide a single `DbHandlerFactory` that auto-detects the available adapter. Rejected - the two adapters have different config structures (phpdb does not use laminas-db config); auto-detection would silently select the wrong adapter. Explicit factories are unambiguous.
+- **ALT-005**: Use `ramsey/uuid` UUID v4 instead of v7. Rejected - UUID v7 is time-ordered, which improves B-tree index write performance on the `uuid` column.
 
 ---
 
 ## 4. Dependencies
 
-- **DEP-001**: `phly/phly-event-dispatcher: ^1.5.0` — move from `require-dev` to `require`.
-- **DEP-002**: `psr/event-dispatcher` — transitively required by `phly/phly-event-dispatcher`; provides `Psr\EventDispatcher\StoppableEventInterface` and `Psr\EventDispatcher\EventDispatcherInterface`.
-- **DEP-003**: `laminas/laminas-eventmanager: ^3.14` — remains in `require-dev` only; used in tests and for the deprecated `Psr3LogLaminasListener`.
-- **DEP-004**: `php-db/phpdb` and associated driver packages — must be registered in the host application container. Not a direct `composer.json` dependency of this component.
-- **DEP-005**: `laminas/laminas-db` — must be registered in the host application container when `LaminasDbHandler` is used. Not a direct `composer.json` dependency of this component.
+- **DEP-001**: `phly/phly-event-dispatcher: ^1.5.0` - move from `require-dev` to `require`.
+- **DEP-002**: `psr/event-dispatcher` - transitively required by `phly/phly-event-dispatcher`; provides `Psr\EventDispatcher\StoppableEventInterface` and `Psr\EventDispatcher\EventDispatcherInterface`.
+- **DEP-003**: `laminas/laminas-eventmanager: ^3.14` - remains in `require-dev` only; used in tests and for the deprecated `Psr3LogLaminasListener`.
+- **DEP-004**: `php-db/phpdb` and associated driver packages - must be registered in the host application container. Not a direct `composer.json` dependency of this component.
+- **DEP-005**: `laminas/laminas-db` - must be registered in the host application container when `LaminasDbHandler` is used. Not a direct `composer.json` dependency of this component.
 - **DEP-006**: Remove `vimeo/psalm` and `psalm/plugin-phpunit` from `require-dev`; update `scripts.static-analysis` from `"psalm --shepherd --stats"` to `"phpstan analyse"`. Psalm is replaced by PHPStan as the sole static analysis tool.
 
 ---
 
 ## 5. Files
 
-- **FILE-001**: `src/ConfigProvider.php` — config key migration, `log_runtime` removal, listener registration update, method rename.
-- **FILE-002**: `src/Runtime.php` — **deleted**.
-- **FILE-003**: `src/Event/LogEvent.php` — refactored: remove Laminas EM inheritance, implement PSR-14 `StoppableEventInterface`, remove `new ConfigProvider()` call, update constructor.
-- **FILE-004**: `src/Container/LogFactory.php` — config key migration, `process_uuid`/`process_translation` flag guards.
-- **FILE-005**: `src/Container/MezzioErrorHandlerDelegator.php` — config key migration.
-- **FILE-006**: `src/Handler/LaminasDbHandler.php` — move `Sql` to constructor, rename column `userIdentifier` → `user_identifier`.
-- **FILE-007**: `src/Handler/LaminasDbHandlerFactory.php` — config key migration, explicit `\Laminas\Db\Adapter\AdapterInterface::class` resolution.
-- **FILE-008**: `src/Handler/PhpDbHandlerFactory.php` — config key migration, explicit `\PhpDb\Adapter\AdapterInterface::class` resolution, inline comment on config structure.
-- **FILE-009**: `src/Listener/Psr3LogLaminasListener.php` — remove `AbstractController` identifier; add `@deprecated` annotation.
-- **FILE-010**: `src/Listener/Psr3LogPsr14Listener.php` — **new file**.
-- **FILE-011**: `src/Listener/Psr3LogPsr14ListenerFactory.php` — **new file**.
-- **FILE-012**: `src/Middleware/MonologMiddleware.php` — configurable auth attribute key; inject config.
-- **FILE-013**: `src/Middleware/MonologMiddlewareFactory.php` — pass config to `MonologMiddleware`.
-- **FILE-014**: `test/integration/TestFixtures/mysql.sql` — rename `userIdentifier` column to `user_identifier`.
-- **FILE-015**: `phpunit.xml.dist` — update PHPUnit schema URL to 13.0.
-- **FILE-016**: `composer.json` — move `phly/phly-event-dispatcher` from `require-dev` to `require`.
-- **FILE-017**: `docs/Project_Architecture_Blueprint.md` — update for 0.1.0 scope (separate update, see blueprint).
-- **FILE-018**: `phpcs.xml` — **deleted**. PHP_CodeSniffer is no longer used; code style is enforced entirely by `.php-cs-fixer.dist.php`.
-- **FILE-019**: `psalm.xml.dist` — **deleted**. Psalm is replaced by PHPStan as the sole static analysis tool.
-- **FILE-020**: `psalm-baseline.xml` — **deleted**. Psalm baseline is no longer relevant after removing `vimeo/psalm`.
-- **FILE-021**: `src/Container/ListenerProviderAggregateFactory.php` — **new file**. Builds `ListenerProviderAggregate` from `'listeners'` and `'listener_providers'` config keys, compatible with `webware/commandbus-event` conventions.
-- **FILE-022**: `test/unit/ConfigProviderTest.php` — extended with PSR-14 alias, listener key, and `getListeners()` format assertions.
+- **FILE-001**: `src/ConfigProvider.php` - config key migration, `log_runtime` removal, listener registration update, method rename.
+- **FILE-002**: `src/Runtime.php` - **deleted**.
+- **FILE-003**: `src/Event/LogEvent.php` - refactored: remove Laminas EM inheritance, implement PSR-14 `StoppableEventInterface`, remove `new ConfigProvider()` call, update constructor.
+- **FILE-004**: `src/Container/LogFactory.php` - config key migration, `process_uuid`/`process_translation` flag guards.
+- **FILE-005**: `src/Container/MezzioErrorHandlerDelegator.php` - config key migration.
+- **FILE-006**: `src/Handler/LaminasDbHandler.php` - move `Sql` to constructor, rename column `userIdentifier` → `user_identifier`.
+- **FILE-007**: `src/Handler/LaminasDbHandlerFactory.php` - config key migration, explicit `\Laminas\Db\Adapter\AdapterInterface::class` resolution.
+- **FILE-008**: `src/Handler/PhpDbHandlerFactory.php` - config key migration, explicit `\PhpDb\Adapter\AdapterInterface::class` resolution, inline comment on config structure.
+- **FILE-009**: `src/Listener/Psr3LogLaminasListener.php` - remove `AbstractController` identifier; add `@deprecated` annotation.
+- **FILE-010**: `src/Listener/Psr3LogPsr14Listener.php` - **new file**.
+- **FILE-011**: `src/Listener/Psr3LogPsr14ListenerFactory.php` - **new file**.
+- **FILE-012**: `src/Middleware/MonologMiddleware.php` - configurable auth attribute key; inject config.
+- **FILE-013**: `src/Middleware/MonologMiddlewareFactory.php` - pass config to `MonologMiddleware`.
+- **FILE-014**: `test/integration/TestFixtures/mysql.sql` - rename `userIdentifier` column to `user_identifier`.
+- **FILE-015**: `phpunit.xml.dist` - update PHPUnit schema URL to 13.0.
+- **FILE-016**: `composer.json` - move `phly/phly-event-dispatcher` from `require-dev` to `require`.
+- **FILE-017**: `docs/Project_Architecture_Blueprint.md` - update for 0.1.0 scope (separate update, see blueprint).
+- **FILE-018**: `phpcs.xml` - **deleted**. PHP_CodeSniffer is no longer used; code style is enforced entirely by `.php-cs-fixer.dist.php`.
+- **FILE-019**: `psalm.xml.dist` - **deleted**. Psalm is replaced by PHPStan as the sole static analysis tool.
+- **FILE-020**: `psalm-baseline.xml` - **deleted**. Psalm baseline is no longer relevant after removing `vimeo/psalm`.
+- **FILE-021**: `src/Container/ListenerProviderAggregateFactory.php` - **new file**. Builds `ListenerProviderAggregate` from `'listeners'` and `'listener_providers'` config keys, compatible with `webware/commandbus-event` conventions.
+- **FILE-022**: `test/unit/ConfigProviderTest.php` - extended with PSR-14 alias, listener key, and `getListeners()` format assertions.
 
 ---
 
 ## 6. Testing
 
-- **TEST-001**: Unit test for `LogEvent` — verify `isPropagationStopped()` returns `false` by default; returns `true` after `stopPropagation()`; all accessor methods return correct values. ✅ `test/unit/Event/LogEventTest.php`
-- **TEST-002**: Unit test for `Psr3LogPsr14Listener` — verify `__invoke(LogEvent)` calls `$logger->log()` with the correct level, message, and context; verify `withName()` is called when the channel differs from `LogChannel::App`; verify renamed logger is used for the actual `log()` call. ✅ `test/unit/Listener/Psr3LogPsr14ListenerTest.php`
-- **TEST-003**: Unit test for `LogFactory` — verify that when `process_uuid = false`, `RamseyUuidProcessor` is NOT pushed; when `process_translation = false`, `LaminasI18nProcessor` is NOT pushed.
-- **TEST-004**: Unit test for `LaminasDbHandlerFactory` and `PhpDbHandlerFactory` — verify each resolves its own adapter FQCN and reads config under `LoggerInterface::class`.
-- **TEST-005**: Unit test for `MonologMiddleware` — verify the auth attribute key is read from config, with correct fallback to `UserInterface::class`.
-- **TEST-006**: Integration test for `LaminasDbHandler` — verify the `user_identifier` column (snake_case) is populated correctly after the column rename.
-- **TEST-007**: Integration test for `PhpDbHandler` — verify `context` JSON column is populated and `user_identifier` is set.
+- **TEST-001**: Unit test for `LogEvent` - verify `isPropagationStopped()` returns `false` by default; returns `true` after `stopPropagation()`; all accessor methods return correct values. ✅ `test/unit/Event/LogEventTest.php`
+- **TEST-002**: Unit test for `Psr3LogPsr14Listener` - verify `__invoke(LogEvent)` calls `$logger->log()` with the correct level, message, and context; verify `withName()` is called when the channel differs from `LogChannel::App`; verify renamed logger is used for the actual `log()` call. ✅ `test/unit/Listener/Psr3LogPsr14ListenerTest.php`
+- **TEST-003**: Unit test for `LogFactory` - verify that when `process_uuid = false`, `RamseyUuidProcessor` is NOT pushed; when `process_translation = false`, `LaminasI18nProcessor` is NOT pushed.
+- **TEST-004**: Unit test for `LaminasDbHandlerFactory` and `PhpDbHandlerFactory` - verify each resolves its own adapter FQCN and reads config under `LoggerInterface::class`.
+- **TEST-005**: Unit test for `MonologMiddleware` - verify the auth attribute key is read from config, with correct fallback to `UserInterface::class`.
+- **TEST-006**: Integration test for `LaminasDbHandler` - verify the `user_identifier` column (snake_case) is populated correctly after the column rename.
+- **TEST-007**: Integration test for `PhpDbHandler` - verify `context` JSON column is populated and `user_identifier` is set.
 - **TEST-008**: Verify static analysis (`phpstan`) passes with zero new errors on all modified files.
 - **TEST-009**: Verify `php-cs-fixer --dry-run` reports no violations on all new and modified files against the `.php-cs-fixer.dist.php` ruleset (`@Webware/coding-standard-1.0`).
 

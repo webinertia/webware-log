@@ -9,7 +9,7 @@
 # This compose file is the single source of truth for the environment. Two
 # ways to use it:
 #
-#   1. VS Code Dev Container — "Reopen in Container" uses
+#   1. VS Code Dev Container: "Reopen in Container" uses
 #      .devcontainer/devcontainer.json, which is *backed by* this file (it
 #      references the `tooling` service rather than defining its own).
 #
@@ -55,13 +55,13 @@ services:
       - "host.docker.internal:host-gateway"
     volumes:
       # Bind-mount the source so edits are visible on both the host and the
-      # container. vendor/ is NOT overridden — it is the host's own copy.
+      # container. vendor/ is NOT overridden - it is the host's own copy.
       # Composer/installs inside the container write straight into the
       # developer's working tree on disk.
       - .:/app
       # The Composer cache lives in a named volume (Linux-native I/O, fast on
       # Windows) so downloads survive container rebuilds. It is only a cache
-      # — the developer's real artifacts all live on the host.
+      # - the developer's real artifacts all live on the host.
       - composer-cache:/tmp/composer-cache
     depends_on:
       mysql:
@@ -69,7 +69,7 @@ services:
     working_dir: /app
 
   # -------------------------------------------------------------------------
-  # MySQL — required by the PhpDbHandler integration tests. Credentials mirror
+  # MySQL - required by the PhpDbHandler integration tests. Credentials mirror
   # the CI `db-env-json` (root, empty password, `webware_log_test` database).
   # The test schema and data are created by the PHPUnit ListenerExtension
   # (MysqlFixtureLoader) at test time, not by this service.
@@ -91,7 +91,7 @@ services:
       - mysql-data:/var/lib/mysql
 
   # -------------------------------------------------------------------------
-  # phpMyAdmin — web UI for the `mysql` service above. Reachable at
+  # phpMyAdmin - web UI for the `mysql` service above. Reachable at
   # http://localhost:8080 (auto-login as root). Note: root uses an empty
   # password, matching the test/CI convention.
   # -------------------------------------------------------------------------
