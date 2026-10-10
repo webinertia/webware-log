@@ -26,7 +26,7 @@ final class InitDbCommandFactoryTest extends TestCase
     public function invokeFallsBackToTheDefaultLogTable(): void
     {
         $executed = [];
-        $command  = (new InitDbCommandFactory())($this->container(
+        $command  = new InitDbCommandFactory()($this->container(
             config  : [],
             executed: $executed,
         ));
@@ -42,7 +42,7 @@ final class InitDbCommandFactoryTest extends TestCase
     public function invokeUsesTheTableTheHandlerIsConfiguredWith(): void
     {
         $executed = [];
-        $command  = (new InitDbCommandFactory())($this->container(
+        $command  = new InitDbCommandFactory()($this->container(
             config  : [LoggerInterface::class => ['table' => 'app_log']],
             executed: $executed,
         ));
