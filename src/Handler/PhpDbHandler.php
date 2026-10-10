@@ -18,7 +18,7 @@ use Monolog\Handler\AbstractProcessingHandler;
 use Monolog\LogRecord;
 use Override;
 use PhpDb\Adapter\AdapterInterface;
-use PhpDb\Sql\Exception\ExceptionInterface;
+use PhpDb\Exception\ExceptionInterface;
 use PhpDb\Sql\Sql;
 
 use function array_diff_key;
