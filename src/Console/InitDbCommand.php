@@ -16,9 +16,9 @@ namespace Webware\Log\Console;
 
 use Override;
 use PhpDb\Adapter\AdapterInterface;
+use PhpDb\Exception\ExceptionInterface as SqlException;
 use PhpDb\Sql\Ddl\CreateTable;
 use PhpDb\Sql\Ddl\DropTable;
-use PhpDb\Sql\Exception\ExceptionInterface as SqlException;
 use PhpDb\Sql\Sql;
 use Symfony\Component\Console\Attribute\AsCommand;
 use Symfony\Component\Console\Command\Command;
