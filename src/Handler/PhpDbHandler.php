@@ -54,7 +54,8 @@ final class PhpDbHandler extends AbstractProcessingHandler
             'extra'   => array_diff_key($record->extra, ['uuid' => true, $this->extraAuthIdentifier => true]),
         ]);
 
-        $insert = $this->sql->insert()
+        $insert = $this->sql
+            ->insert()
             ->values([
                 'channel'         => $record->channel,
                 'level'           => $record->level->getName(),

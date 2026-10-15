@@ -79,7 +79,8 @@ final class LaminasI18nProcessorTest extends TestCase
     {
         /** @var MockObject&TranslatorInterface $translator */
         $translator = $this->createMock(TranslatorInterface::class);
-        $translator->expects($this->once())
+        $translator
+            ->expects($this->once())
             ->method('translate')
             ->with('Hello world')
             ->willReturn('Hola mundo');

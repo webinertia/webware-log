@@ -19,12 +19,9 @@ use Psr\Container\ContainerExceptionInterface;
 use Psr\Container\ContainerInterface;
 use Psr\Container\NotFoundExceptionInterface;
 use Psr\Log\LoggerInterface;
-use Webware\Log\ConfigProvider;
+use Webware\Log\Container\IdentityField;
 use Webware\Log\Http\Middleware\MonologMiddleware;
 
-/**
- * @phpstan-import-type LogDefaults from ConfigProvider
- */
 class MonologMiddlewareFactory
 {
     /**
@@ -36,12 +33,9 @@ class MonologMiddlewareFactory
         /** @var Logger */
         $logger = $container->get(LoggerInterface::class);
 
-        /** @var array{LoggerInterface::class?: LogDefaults} */
-        $rawConfig = $container->get('config');
+        /** @var array<string, mixed> $config */
+        $config = $container->get('config');
 
-        $logConfig     = $rawConfig[LoggerInterface::class] ?? new ConfigProvider()->getConfigDefaults();
-        $authAttribute = $logConfig['auth_attribute'];
-
-        return new MonologMiddleware($logger, $authAttribute);
+        return new MonologMiddleware($logger, IdentityField::resolve($config));
     }
 }

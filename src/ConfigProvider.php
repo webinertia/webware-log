@@ -15,7 +15,6 @@ declare(strict_types=1);
 namespace Webware\Log;
 
 use Laminas\Stratigility\Middleware\ErrorHandler;
-use Mezzio\Authentication\UserInterface;
 use Phly\EventDispatcher\EventDispatcher;
 use Phly\EventDispatcher\ListenerProvider\AttachableListenerProvider;
 use Phly\EventDispatcher\ListenerProvider\ListenerProviderAggregate;
@@ -27,7 +26,6 @@ use Webware\Console\ConsoleInterface;
 
 /**
  * @phpstan-type LogDefaults array{
- *     auth_attribute: string,
  *     channel: string,
  *     log_errors: bool,
  *     process_uuid: bool,
@@ -83,7 +81,6 @@ class ConfigProvider
     public function getConfigDefaults(): array
     {
         return [
-            'auth_attribute'      => UserInterface::class,
             'channel'             => LogChannel::App->value,
             'log_errors'          => false,
             'process_uuid'        => false,

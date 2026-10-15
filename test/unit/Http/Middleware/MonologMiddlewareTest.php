@@ -28,12 +28,16 @@ use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
 use Psr\Http\Server\RequestHandlerInterface;
 use Psr\Log\LoggerInterface;
+use Webware\Core\UserInterface as WebwareUserInterface;
 use Webware\Log\Http\Middleware\MonologMiddleware;
 
 #[CoversClass(MonologMiddleware::class)]
 #[CoversMethod(MonologMiddleware::class, 'process')]
 final class MonologMiddlewareTest extends TestCase
 {
+    /** The attribute key webware's own user contract is attached under. */
+    private const string WEBWARE_ATTRIBUTE = WebwareUserInterface::class;
+
     /**
      * @throws \PHPUnit\Exception
      */
@@ -46,7 +50,8 @@ final class MonologMiddlewareTest extends TestCase
         $response = $this->createStub(ResponseInterface::class);
 
         $request->method('getAttribute')->willReturn(null);
-        $request->expects($this->once())
+        $request
+            ->expects($this->once())
             ->method('withAttribute')
             ->with(LoggerInterface::class, $logger)
             ->willReturn($request);
@@ -83,6 +88,21 @@ final class MonologMiddlewareTest extends TestCase
      * @throws \PHPUnit\Exception
      */
     #[Test]
+    public function processIgnoresAttributesThatAreNotOneOfTheTwoContracts(): void
+    {
+        // The attribute key has to be one of the two contracts. An implementation
+        // attached under any other key is not an identity source.
+        $extra = $this->capturedExtra([
+            'my_app_user' => $this->userWithIdentity('user@example.com'),
+        ]);
+
+        self::assertNull($extra);
+    }
+
+    /**
+     * @throws \PHPUnit\Exception
+     */
+    #[Test]
     public function processorAddsEmailToRecordExtra(): void
     {
         /** @var Logger&MockObject $logger */
@@ -98,7 +118,8 @@ final class MonologMiddlewareTest extends TestCase
         $handler->method('handle')->willReturn($response);
 
         $processor = null;
-        $logger->expects($this->once())
+        $logger
+            ->expects($this->once())
             ->method('pushProcessor')
             ->willReturnCallback(static function (callable $callback) use (&$processor, $logger): Logger {
                 $processor = $callback;
@@ -129,6 +150,34 @@ final class MonologMiddlewareTest extends TestCase
      * @throws \PHPUnit\Exception
      */
     #[Test]
+    public function processorWritesUnderTheConfiguredIdentityField(): void
+    {
+        $extra = $this->capturedExtra(
+            [UserInterface::class => $this->userWithIdentity('user@example.com')],
+            'user_name',
+        );
+
+        self::assertSame(['user_name' => 'user@example.com'], $extra);
+    }
+
+    /**
+     * @throws \PHPUnit\Exception
+     */
+    #[Test]
+    public function processPrefersWebwareContractOverMezzio(): void
+    {
+        $extra = $this->capturedExtra([
+            self::WEBWARE_ATTRIBUTE => $this->userWithIdentity('webware@example.com'),
+            UserInterface::class    => $this->userWithIdentity('mezzio@example.com'),
+        ]);
+
+        self::assertSame(['email' => 'webware@example.com'], $extra);
+    }
+
+    /**
+     * @throws \PHPUnit\Exception
+     */
+    #[Test]
     public function processPushesProcessorWhenUserAttributePresent(): void
     {
         /** @var Logger&MockObject $logger */
@@ -152,21 +201,73 @@ final class MonologMiddlewareTest extends TestCase
      * @throws \PHPUnit\Exception
      */
     #[Test]
-    public function processUsesCustomAuthAttributeKey(): void
+    public function processUsesMezzioContractWhenWebwareIsAbsent(): void
     {
-        $logger   = $this->createStub(Logger::class);
-        $request  = $this->createMock(ServerRequestInterface::class);
-        $handler  = $this->createStub(RequestHandlerInterface::class);
-        $response = $this->createStub(ResponseInterface::class);
+        $extra = $this->capturedExtra([
+            UserInterface::class => $this->userWithIdentity('mezzio@example.com'),
+        ]);
 
-        $request->expects($this->once())
+        self::assertSame(['email' => 'mezzio@example.com'], $extra);
+    }
+
+    /**
+     * Runs the middleware against a request carrying $attributes, then returns
+     * the `extra` array the pushed processor produced for a fresh record, or
+     * null when no processor was pushed.
+     *
+     * @param array<string, object> $attributes
+     *
+     * @return array<string, mixed>|null
+     *
+     * @throws \PHPUnit\Exception
+     */
+    private function capturedExtra(array $attributes, string $identityField = 'email'): ?array
+    {
+        $logger  = $this->createStub(Logger::class);
+        $request = $this->createStub(ServerRequestInterface::class);
+        $handler = $this->createStub(RequestHandlerInterface::class);
+
+        $request
             ->method('getAttribute')
-            ->with('my_auth_user')
-            ->willReturn(null);
-
+            ->willReturnCallback(
+                static fn(string $attribute): ?object => $attributes[$attribute] ?? null,
+            );
         $request->method('withAttribute')->willReturn($request);
-        $handler->method('handle')->willReturn($response);
+        $handler->method('handle')->willReturn($this->createStub(ResponseInterface::class));
 
-        new MonologMiddleware($logger, 'my_auth_user')->process($request, $handler);
+        $processor = null;
+        $logger
+            ->method('pushProcessor')
+            ->willReturnCallback(
+                static function (callable $callback) use (&$processor, $logger): Logger {
+                    $processor = $callback;
+
+                    return $logger;
+                },
+            );
+
+        new MonologMiddleware($logger, $identityField)->process($request, $handler);
+
+        if (null === $processor) {
+            return null;
+        }
+
+        /** @var callable(LogRecord): LogRecord $processor */
+        $record = new LogRecord(
+            datetime: new DateTimeImmutable(),
+            channel : 'test',
+            level   : Level::Debug,
+            message : 'test',
+        );
+
+        return $processor($record)->extra;
+    }
+
+    private function userWithIdentity(string $identity): UserInterface
+    {
+        $user = $this->createStub(UserInterface::class);
+        $user->method('getIdentity')->willReturn($identity);
+
+        return $user;
     }
 }

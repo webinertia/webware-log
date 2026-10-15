@@ -23,24 +23,42 @@ use Psr\Http\Message\ServerRequestInterface;
 use Psr\Http\Server\MiddlewareInterface;
 use Psr\Http\Server\RequestHandlerInterface;
 use Psr\Log\LoggerInterface;
+use Webware\Core\UserInterface as WebwareUserInterface;
+use Webware\Log\Container\IdentityField;
 
 class MonologMiddleware implements MiddlewareInterface
 {
+    /**
+     * The request attribute keys the authenticated user is read from, most
+     * preferred first.
+     *
+     * webware-core is a dev requirement rather than a runtime one: a consumer
+     * that uses no other webware component never installs it, and the constant
+     * resolves to the attribute key without loading the interface. A host maps
+     * its own implementation onto one of these two contracts and attaches it
+     * under that contract's name, so webware's wins when a request carries both.
+     */
+    private const array IDENTITY_ATTRIBUTES = [
+        WebwareUserInterface::class,
+        UserInterface::class,
+    ];
+
     public function __construct(
         private LoggerInterface&Logger $logger,
-        private readonly string $authAttribute = UserInterface::class,
+        private readonly string $identityField = IdentityField::DEFAULT,
     ) {}
 
     #[Override]
     public function process(ServerRequestInterface $request, RequestHandlerInterface $handler): ResponseInterface
     {
-        /** @var UserInterface|null */
-        $userInterface = $request->getAttribute($this->authAttribute);
+        $identity = $this->resolveIdentity($request);
 
-        if ($userInterface instanceof UserInterface) {
-            $this->logger->pushProcessor(static function (LogRecord $record) use ($userInterface): LogRecord {
-                $extra          = $record->extra;
-                $extra['email'] = $userInterface->getIdentity();
+        if (null !== $identity) {
+            $field = $this->identityField;
+
+            $this->logger->pushProcessor(static function (LogRecord $record) use ($identity, $field): LogRecord {
+                $extra         = $record->extra;
+                $extra[$field] = $identity;
 
                 return $record->with(extra: $extra);
             });
@@ -50,5 +68,23 @@ class MonologMiddleware implements MiddlewareInterface
         $request = $request->withAttribute(LoggerInterface::class, $this->logger);
 
         return $handler->handle($request);
+    }
+
+    /**
+     * Resolve the authenticated user's identity string, preferring webware's
+     * contract over mezzio's when a host has attached both.
+     */
+    private function resolveIdentity(ServerRequestInterface $request): ?string
+    {
+        foreach (self::IDENTITY_ATTRIBUTES as $attribute) {
+            /** @var UserInterface|null $user */
+            $user = $request->getAttribute($attribute);
+
+            if ($user instanceof UserInterface) {
+                return $user->getIdentity();
+            }
+        }
+
+        return null;
     }
 }

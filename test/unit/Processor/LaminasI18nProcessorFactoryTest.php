@@ -42,19 +42,22 @@ final class LaminasI18nProcessorFactoryTest extends TestCase
     public function invokeReturnsLaminasI18nProcessorWhenTranslatorPresent(): void
     {
         $translator = $this->createMock(TranslatorInterface::class);
-        $translator->expects($this->once())
+        $translator
+            ->expects($this->once())
             ->method('translate')
             ->with('Hello world')
             ->willReturn('Hola mundo');
 
         $container = $this->createStub(ContainerInterface::class);
 
-        $container->method('has')
+        $container
+            ->method('has')
             ->willReturnCallback(
                 static fn(string $id): bool => TranslatorInterface::class === $id,
             );
 
-        $container->method('get')
+        $container
+            ->method('get')
             ->willReturnCallback(
                 static fn(string $id): mixed => TranslatorInterface::class === $id ? $translator : null,
             );
@@ -83,7 +86,8 @@ final class LaminasI18nProcessorFactoryTest extends TestCase
     public function invokeThrowsWhenTranslatorNotInContainer(): void
     {
         $container = $this->createStub(ContainerInterface::class);
-        $container->method('has')
+        $container
+            ->method('has')
             ->willReturnCallback(
                 static fn(string $id): bool => false,
             );

@@ -117,7 +117,8 @@ final class ListenerProviderAggregateFactoryTest extends TestCase
         $services[AttachableListenerProvider::class]  = $attachableProvider;
 
         $container = $this->createStub(ContainerInterface::class);
-        $container->method('get')
+        $container
+            ->method('get')
             ->willReturnCallback(
                 static function (string $id) use ($config, $services): mixed {
                     if ('config' === $id) {
@@ -127,7 +128,8 @@ final class ListenerProviderAggregateFactoryTest extends TestCase
                     return $services[$id] ?? null;
                 },
             );
-        $container->method('has')
+        $container
+            ->method('has')
             ->willReturnCallback(
                 static fn(string $id): bool => isset($services[$id]),
             );

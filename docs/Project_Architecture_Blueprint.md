@@ -139,7 +139,7 @@ HTTP Request
     │
     ▼
 MonologMiddleware.process()
-    │  pushProcessor(fn: extract UserInterface identity → extra['email'])
+    │  pushProcessor(fn: extract UserInterface identity -> extra[identity field])
     │  request->withAttribute(LoggerInterface, $logger)
     ▼
 Handler / Controller
@@ -215,7 +215,6 @@ The root wiring class for the Laminas component installer. When invoked, it retu
         'process_uuid'        => false,
         'process_translation' => false,
         'table'               => 'log',
-        'auth_attribute'      => UserInterface::class, // configurable (0.1.0+)
     ],
 ]
 ```
@@ -281,8 +280,8 @@ Both handlers extend `Monolog\Handler\AbstractProcessingHandler` and write one r
 
 A PSR-15 `MiddlewareInterface` that runs early in the Mezzio pipeline to:
 
-1. Extract the authenticated `UserInterface` from the request attributes.
-2. Push a closure-based processor that adds the user's identity to every subsequent log record's `extra` array.
+1. Extract the authenticated `UserInterface` from the request attributes, preferring `Webware\Core\UserInterface` over `Mezzio\Authentication\UserInterface`.
+2. Push a closure-based processor that adds the user's identity to every subsequent log record's `extra` array, under the key named by `authentication.username`.
 3. Attach the configured `LoggerInterface` to the request via `withAttribute()`, making it available to downstream handlers.
 
 ---
@@ -381,8 +380,8 @@ UUID v7 (time-ordered, monotonic) is used - generated per record using `ramsey/u
 
 ### 6.2 Authentication / User Identity
 
-- `MonologMiddleware` reads `UserInterface` from the PSR-7 request attribute (Mezzio Authentication).
-- The user identifier key (`email` by default) is configurable via `authentication.username` in the application config, supporting `mezzio-authentication-session` and other providers.
+- `MonologMiddleware` reads the user from one of two class-name PSR-7 request attributes, preferring `Webware\Core\UserInterface` over `Mezzio\Authentication\UserInterface`.
+- The user identifier key (`email` by default) comes from `authentication.username` in the application config, supporting `mezzio-authentication-session` and other providers. Both the middleware and `PhpDbHandlerFactory` resolve that key through `IdentityField`, so the record's `extra` key and the `user_identifier` column cannot drift apart.
 
 ### 6.3 Internationalization
 
