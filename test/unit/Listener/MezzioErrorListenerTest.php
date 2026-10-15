@@ -44,7 +44,8 @@ final class MezzioErrorListenerTest extends TestCase
         $request   = $this->createStub(ServerRequestInterface::class);
         $response  = $this->createStub(ResponseInterface::class);
 
-        $this->logger->expects($this->once())
+        $this->logger
+            ->expects($this->once())
             ->method('error')
             ->with(
                 'error',
@@ -64,7 +65,8 @@ final class MezzioErrorListenerTest extends TestCase
         $request   = $this->createStub(ServerRequestInterface::class);
         $response  = $this->createStub(ResponseInterface::class);
 
-        $this->logger->expects($this->once())
+        $this->logger
+            ->expects($this->once())
             ->method('error')
             ->with(
                 'oops',
@@ -86,7 +88,8 @@ final class MezzioErrorListenerTest extends TestCase
         $request   = $this->createStub(ServerRequestInterface::class);
         $response  = $this->createStub(ResponseInterface::class);
 
-        $this->logger->expects($this->once())
+        $this->logger
+            ->expects($this->once())
             ->method('error')
             ->with('something went wrong', $this->arrayHasKey('exception'));
 

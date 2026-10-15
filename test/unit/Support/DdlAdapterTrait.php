@@ -28,7 +28,8 @@ trait DdlAdapterTrait
         $adapter = $this->createStub(AdapterInterface::class);
         $adapter->method('getDriver')->willReturn($driver);
         $adapter->method('getPlatform')->willReturn(new AdapterPlatform($driver));
-        $adapter->method('query')
+        $adapter
+            ->method('query')
             ->willReturnCallback(
                 function (string $sql) use (&$executed): ResultInterface {
                     $executed[] = $sql;

@@ -60,7 +60,8 @@ final class InitDbCommandFactoryTest extends TestCase
     {
         $adapter   = $this->ddlAdapter($executed);
         $container = $this->createStub(ContainerInterface::class);
-        $container->method('get')
+        $container
+            ->method('get')
             ->willReturnCallback(
                 static fn(string $id): mixed => match ($id) {
                     'config'                => $config,

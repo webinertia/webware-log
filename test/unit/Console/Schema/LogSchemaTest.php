@@ -69,7 +69,8 @@ final class LogSchemaTest extends TestCase
     #[Test]
     public function logTableOptionsSetEngineCharsetAndCollation(): void
     {
-        $options = new LogSchema()->logTable('log')
+        $options = new LogSchema()
+            ->logTable('log')
             ->getOptions();
 
         self::assertSame(['engine', 'default charset', 'collate'], array_keys($options));
