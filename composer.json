@@ -55,7 +55,8 @@
         "roave/backward-compatibility-check": "^8.21.0",
         "roave/security-advisories": "dev-master",
         "webware/webware-console": "1.0.x-dev",
-        "webware/webware-tools": "^1.0.0-rc.5"
+        "webware/webware-core": "^1.0.0-alpha.9",
+        "webware/webware-tools": "^1.0.0-rc.6"
     },
     "suggest": {
         "php-db/phpdb-mysql": "Required when using PhpDbHandler with a MySQL/MariaDB database",
