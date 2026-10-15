@@ -53,13 +53,13 @@ final class MezzioErrorHandlerDelegatorTest extends TestCase
                     'process_uuid'        => false,
                     'process_translation' => false,
                     'table'               => 'log',
-                    'auth_attribute'      => 'attr',
                 ],
             ],
             [LoggerInterface::class => $logger],
         );
 
-        $errorHandler->expects($this->once())
+        $errorHandler
+            ->expects($this->once())
             ->method('attachListener')
             ->with($this->isInstanceOf(MezzioErrorListener::class));
 
@@ -104,7 +104,6 @@ final class MezzioErrorHandlerDelegatorTest extends TestCase
                 'process_uuid'        => false,
                 'process_translation' => false,
                 'table'               => 'log',
-                'auth_attribute'      => 'attr',
             ],
         ]);
 
@@ -126,7 +125,8 @@ final class MezzioErrorHandlerDelegatorTest extends TestCase
     private function makeContainer(array $config, array $services = []): ContainerInterface
     {
         $container = $this->createStub(ContainerInterface::class);
-        $container->method('get')
+        $container
+            ->method('get')
             ->willReturnCallback(
                 static function (string $id) use ($config, $services): mixed {
                     if ('config' === $id) {

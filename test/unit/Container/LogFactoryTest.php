@@ -75,7 +75,6 @@ final class LogFactoryTest extends TestCase
                     'process_uuid'        => false,
                     'process_translation' => true,
                     'table'               => 'log',
-                    'auth_attribute'      => 'attr',
                 ],
             ],
             [
@@ -130,7 +129,6 @@ final class LogFactoryTest extends TestCase
                     'process_uuid'        => false,
                     'process_translation' => false,
                     'table'               => 'log',
-                    'auth_attribute'      => 'attr',
                 ],
             ],
             [PhpDbHandler::class => $handler],
@@ -155,7 +153,8 @@ final class LogFactoryTest extends TestCase
     {
         $container = $this->createStub(ContainerInterface::class);
 
-        $container->method('get')
+        $container
+            ->method('get')
             ->willReturnCallback(
                 static function (string $id) use ($config, $services): mixed {
                     if ('config' === $id) {
@@ -166,7 +165,8 @@ final class LogFactoryTest extends TestCase
                 },
             );
 
-        $container->method('has')
+        $container
+            ->method('has')
             ->willReturnCallback(
                 static fn(string $id): bool => isset($services[$id]),
             );

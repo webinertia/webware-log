@@ -20,6 +20,7 @@ use Psr\Container\ContainerInterface;
 use Psr\Container\NotFoundExceptionInterface;
 use Psr\Log\LoggerInterface;
 use Webware\Log\ConfigProvider;
+use Webware\Log\Container\IdentityField;
 
 /**
  * @phpstan-import-type LogDefaults from ConfigProvider
@@ -46,7 +47,7 @@ final class PhpDbHandlerFactory
         return new PhpDbHandler(
             $adapter,
             $config['table'],
-            $rawConfig['authentication']['username'] ?? 'email',
+            IdentityField::resolve($rawConfig),
         );
     }
 }

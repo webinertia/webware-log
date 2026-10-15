@@ -75,7 +75,6 @@ final class PhpDbHandlerFactoryTest extends TestCase
                 'log_errors'          => false,
                 'process_uuid'        => false,
                 'process_translation' => false,
-                'auth_attribute'      => 'attr',
             ],
         ]);
 
@@ -95,7 +94,8 @@ final class PhpDbHandlerFactoryTest extends TestCase
     {
         $adapter   = $this->createStub(AdapterInterface::class);
         $container = $this->createStub(ContainerInterface::class);
-        $container->method('get')
+        $container
+            ->method('get')
             ->willReturnCallback(
                 static function (string $id) use ($config, $adapter): mixed {
                     if ('config' === $id) {
