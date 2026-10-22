@@ -18,18 +18,23 @@
 # .gitattributes), which keeps the container and host line endings consistent.
 # ---------------------------------------------------------------------------
 
-# PHP version to base the image on (latest 8.4 patch release). Keep in sync
+# PHP version to base the image on (latest 8.5 patch release). Keep in sync
 # with the package's supported PHP versions and `config.platform.php`.
-ARG PHP_VERSION=8.4.24
+ARG PHP_VERSION=8.5.12
 
 # Composer version (copied from the official composer image at build time).
-ARG COMPOSER_VERSION=2
+ARG COMPOSER_VERSION=2.10.3
 
 # Named stage so Composer can be copied from it (--from does not support
 # inline variable expansion).
 FROM composer:${COMPOSER_VERSION} AS composer
 
 FROM php:${PHP_VERSION}-cli
+
+# PECL extension versions, pinned so a rebuild cannot silently pick up a
+# different extension release.
+ARG PCOV_VERSION=1.0.12
+ARG XDEBUG_VERSION=3.5.3
 
 # ---------------------------------------------------------------------------
 # System packages + PHP extensions
@@ -51,7 +56,7 @@ RUN set -eux; \
         pdo_mysql \
         mysqli \
     ; \
-    pecl install pcov \
+    pecl install "pcov-${PCOV_VERSION}" \
     && docker-php-ext-enable pcov \
     ; \
     apt-get clean; \
@@ -64,7 +69,7 @@ RUN set -eux; \
 # normal Composer/PHPUnit/Mago runs. Enable it with XDEBUG_MODE=debug (see
 # compose.yml) and connect the IDE to host.docker.internal.
 RUN set -eux; \
-    pecl install xdebug \
+    pecl install "xdebug-${XDEBUG_VERSION}" \
     && docker-php-ext-enable xdebug \
     ; \
     { \

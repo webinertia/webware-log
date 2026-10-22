@@ -24,9 +24,9 @@
 # Webware Log's integration tests exercise the MySQL-backed PhpDbHandler, so a
 # `mysql` service is enabled below (reachable from `tooling` as host `mysql`
 # on port 3306), plus a `phpmyadmin` web UI at http://localhost:8080. The
-# MySQL credentials mirror the CI `db-env-json` parameter (root / empty
-# password / `webware_log_test` database); test data is seeded by the PHPUnit
-# ListenerExtension, not by this file.
+# MySQL credentials mirror the CI `db-env-json` parameter and the rest of the
+# fleet (`webware` / `webware` / `webware` database); test data is seeded by
+# the PHPUnit ListenerExtension, not by this file.
 # ---------------------------------------------------------------------------
 
 services:
@@ -34,10 +34,10 @@ services:
     build:
       context: .
       args:
-        # PHP version to base the image on (latest 8.4 patch release). Keep
+        # PHP version to base the image on (latest 8.5 patch release). Keep
         # in sync with the package's supported PHP versions and
         # `config.platform.php`.
-        PHP_VERSION: "8.4.24"
+        PHP_VERSION: "8.5.12"
     # Keep the container alive so `docker compose exec` can attach to it.
     # (VS Code Dev Containers override this with their own command.)
     command: sleep infinity
@@ -70,16 +70,25 @@ services:
 
   # -------------------------------------------------------------------------
   # MySQL - required by the PhpDbHandler integration tests. Credentials mirror
-  # the CI `db-env-json` (root, empty password, `webware_log_test` database).
-  # The test schema and data are created by the PHPUnit ListenerExtension
-  # (MysqlFixtureLoader) at test time, not by this service.
+  # the CI `db-env-json` and the rest of the fleet. The test schema and data
+  # are created by the PHPUnit ListenerExtension (MysqlFixtureLoader) at test
+  # time, not by this service: the user below holds ALL on `webware`, which is
+  # enough for the loader's CREATE DATABASE IF NOT EXISTS / DROP DATABASE IF
+  # EXISTS.
   # -------------------------------------------------------------------------
   mysql:
-    image: mysql:9.7
+    image: mysql:9.7.4
+    ports:
+      # Publish so DB-backed tests can reach MySQL from the host at
+      # 127.0.0.1:3306 (matches CI's db-port and the TESTS_ADAPTER_MYSQL_HOSTNAME
+      # connection convention).
+      - "127.0.0.1:3306:3306"
     environment:
       MYSQL_ROOT_HOST: "%"
-      MYSQL_DATABASE: webware_log_test
       MYSQL_ALLOW_EMPTY_PASSWORD: "true"
+      MYSQL_DATABASE: webware
+      MYSQL_USER: webware
+      MYSQL_PASSWORD: webware
     healthcheck:
       test: ["CMD", "mysqladmin", "ping", "-h", "localhost"]
       interval: 5s
@@ -92,18 +101,18 @@ services:
 
   # -------------------------------------------------------------------------
   # phpMyAdmin - web UI for the `mysql` service above. Reachable at
-  # http://localhost:8080 (auto-login as root). Note: root uses an empty
-  # password, matching the test/CI convention.
+  # http://localhost:8080 (auto-login as root, matching every other repo in
+  # the fleet; the loopback bind is what bounds it).
   # -------------------------------------------------------------------------
   phpmyadmin:
-    image: phpmyadmin:latest
+    image: phpmyadmin:5.2.3
     environment:
       PMA_HOST: mysql
       PMA_PORT: 3306
       PMA_USER: root
       PMA_PASSWORD: ""
     ports:
-      - "8080:80"
+      - "127.0.0.1:8080:80"
     depends_on:
       mysql:
         condition: service_healthy
