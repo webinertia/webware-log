@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "0b64f5ca4320d518cabe967475de0de2",
+    "content-hash": "9e90550cbbb79894c7180a50469f3948",
     "packages": [
         {
             "name": "brick/math",
@@ -12336,16 +12336,16 @@
         },
         {
             "name": "webware/webware-tools",
-            "version": "1.0.0-rc.6",
+            "version": "1.0.0-rc.7",
             "source": {
                 "type": "git",
                 "url": "https://github.com/webinertia/webware-tools.git",
-                "reference": "d005c08ff563a5086d50c2ea4a9cb36b9052192a"
+                "reference": "32fc4d67f318e7a32cd101e0a118c03060115a6b"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/webinertia/webware-tools/zipball/d005c08ff563a5086d50c2ea4a9cb36b9052192a",
-                "reference": "d005c08ff563a5086d50c2ea4a9cb36b9052192a",
+                "url": "https://api.github.com/repos/webinertia/webware-tools/zipball/32fc4d67f318e7a32cd101e0a118c03060115a6b",
+                "reference": "32fc4d67f318e7a32cd101e0a118c03060115a6b",
                 "shasum": ""
             },
             "require": {
@@ -12374,9 +12374,9 @@
             ],
             "support": {
                 "issues": "https://github.com/webinertia/webware-tools/issues",
-                "source": "https://github.com/webinertia/webware-tools/tree/1.0.0-rc.6"
+                "source": "https://github.com/webinertia/webware-tools/tree/1.0.0-rc.7"
             },
-            "time": "2026-10-15T06:56:25+00:00"
+            "time": "2026-10-22T03:44:16+00:00"
         }
     ],
     "aliases": [],
