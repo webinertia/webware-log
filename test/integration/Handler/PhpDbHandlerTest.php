@@ -220,9 +220,9 @@ final class PhpDbHandlerTest extends TestCase
     protected function setUp(): void
     {
         $hostname = getenv('TESTS_ADAPTER_MYSQL_HOSTNAME') ?: 'localhost';
-        $username = getenv('TESTS_ADAPTER_MYSQL_USERNAME') ?: 'root';
-        $password = getenv('TESTS_ADAPTER_MYSQL_PASSWORD') ?: '';
-        $database = getenv('TESTS_ADAPTER_MYSQL_DATABASE') ?: 'webware_log_test';
+        $username = getenv('TESTS_ADAPTER_MYSQL_USERNAME') ?: 'webware';
+        $password = getenv('TESTS_ADAPTER_MYSQL_PASSWORD') ?: 'webware';
+        $database = getenv('TESTS_ADAPTER_MYSQL_DATABASE') ?: 'webware';
         $port     = (int) (getenv('TESTS_ADAPTER_MYSQL_PORT') ?: '3306');
 
         $connection = new Connection([
