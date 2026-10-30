@@ -23,7 +23,7 @@
 ARG PHP_VERSION=8.5.12
 
 # Composer version (copied from the official composer image at build time).
-ARG COMPOSER_VERSION=2.10.3
+ARG COMPOSER_VERSION=2.11.0
 
 # Named stage so Composer can be copied from it (--from does not support
 # inline variable expansion).
