@@ -64,6 +64,38 @@ final class PhpDbHandlerTest extends TestCase
      * @throws \PHPUnit\Exception
      */
     #[Test]
+    public function writeExcludesExtraAuthIdentifierFromContextExtra(): void
+    {
+        $handler = new PhpDbHandler($this->adapter, 'log');
+        $record  = new LogRecord(
+            datetime : new DateTimeImmutable(),
+            channel  : 'app',
+            level    : Level::Info,
+            message  : 'extra auth identifier exclusion test',
+            formatted: 'extra auth identifier exclusion test',
+            extra    : ['email' => 'user@example.com', 'request_id' => 'abc-123'],
+        );
+
+        $handler->handle($record);
+
+        $stmt = $this->pdo->prepare(
+            'SELECT context FROM log WHERE message = ? ORDER BY id DESC LIMIT 1',
+        );
+        $stmt->execute(['extra auth identifier exclusion test']);
+
+        /** @var array{context: string}|false $row */
+        $row = $stmt->fetch(PDO::FETCH_ASSOC);
+
+        $this->assertIsArray($row);
+        $this->assertStringContainsString('request_id', $row['context']);
+        $this->assertStringNotContainsString('user@example.com', $row['context']);
+    }
+
+    /**
+     * @throws PDOException
+     * @throws \PHPUnit\Exception
+     */
+    #[Test]
     public function writeExcludesUuidFromContextExtra(): void
     {
         $handler = new PhpDbHandler($this->adapter, 'log');
@@ -211,6 +243,36 @@ final class PhpDbHandlerTest extends TestCase
         $this->assertStringContainsString('"value"', $row['context']);
         $this->assertStringContainsString('https://example.com/path', $row['context']);
         $this->assertStringContainsString('café', $row['context']);
+    }
+
+    /**
+     * @throws PDOException
+     * @throws \PHPUnit\Exception
+     */
+    #[Test]
+    public function writeStoresNullContextWhenNothingIsLogged(): void
+    {
+        $handler = new PhpDbHandler($this->adapter, 'log');
+        $record  = new LogRecord(
+            datetime : new DateTimeImmutable(),
+            channel  : 'app',
+            level    : Level::Info,
+            message  : 'empty context test',
+            formatted: 'empty context test',
+        );
+
+        $handler->handle($record);
+
+        $stmt = $this->pdo->prepare(
+            'SELECT context FROM log WHERE message = ? ORDER BY id DESC LIMIT 1',
+        );
+        $stmt->execute(['empty context test']);
+
+        /** @var array{context: string|null}|false $row */
+        $row = $stmt->fetch(PDO::FETCH_ASSOC);
+
+        $this->assertIsArray($row);
+        $this->assertNull($row['context']);
     }
 
     /**
