@@ -23,6 +23,7 @@ use PhpDb\Sql\Sql;
 
 use function array_diff_key;
 use function array_filter;
+use function is_string;
 use function json_encode;
 
 use const JSON_THROW_ON_ERROR;
@@ -43,6 +44,11 @@ final class PhpDbHandler extends AbstractProcessingHandler
         $this->sql = new Sql($adapter, $this->table);
     }
 
+    private static function asString(mixed $value): ?string
+    {
+        return is_string($value) ? $value : null;
+    }
+
     /**
      * @throws ExceptionInterface
      */
@@ -59,10 +65,10 @@ final class PhpDbHandler extends AbstractProcessingHandler
             ->values([
                 'channel'         => $record->channel,
                 'level'           => $record->level->getName(),
-                'uuid'            => $record->extra['uuid'] ?? null,
+                'uuid'            => self::asString($record->extra['uuid'] ?? null),
                 'message'         => $record->message,
                 'time'            => $record->datetime->format('U'),
-                'user_identifier' => $record->extra[$this->extraAuthIdentifier] ?? null,
+                'user_identifier' => self::asString($record->extra[$this->extraAuthIdentifier] ?? null),
                 'context'         => [] !== $context
                     ? json_encode($context, JSON_THROW_ON_ERROR | JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES)
                     : null,
