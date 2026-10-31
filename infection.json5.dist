@@ -7,6 +7,10 @@
     },
     "timeout": 10,
     "threads": "max",
+    // Kept in step with min-msi / min-covered-msi in the CI workflow, so a local
+    // `composer mutation-test` fails on the same threshold CI does.
+    "minMsi": 95,
+    "minCoveredMsi": 95,
     "logs": {
         "text": "infection.log",
         "summary": "summary.log",

@@ -17,8 +17,8 @@
   "enable_codecov": true,
   "enable_infection": true,
   "coverage_php_version": "8.5",
-  "min_msi": "85",
-  "min_covered_msi": "85",
+  "min_msi": "95",
+  "min_covered_msi": "95",
   "test_env_json": {
     "TESTS_ADAPTER_MYSQL_HOSTNAME": "127.0.0.1"
   }
