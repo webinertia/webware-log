@@ -6,7 +6,7 @@
         ]
     },
     "timeout": 10,
-    "threads": "max",
+    "threads": 4,
     // Kept in step with min-msi / min-covered-msi in the CI workflow, so a local
     // `composer mutation-test` fails on the same threshold CI does.
     "minMsi": 95,
