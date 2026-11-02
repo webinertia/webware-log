@@ -12339,12 +12339,12 @@
             "source": {
                 "type": "git",
                 "url": "https://github.com/webinertia/webware-console.git",
-                "reference": "5da57bbbd6435caf036cc391ef36195748c5a06b"
+                "reference": "0940dd62067f8d114ebfe119babd811fe9ac2ac5"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/webinertia/webware-console/zipball/5da57bbbd6435caf036cc391ef36195748c5a06b",
-                "reference": "5da57bbbd6435caf036cc391ef36195748c5a06b",
+                "url": "https://api.github.com/repos/webinertia/webware-console/zipball/0940dd62067f8d114ebfe119babd811fe9ac2ac5",
+                "reference": "0940dd62067f8d114ebfe119babd811fe9ac2ac5",
                 "shasum": ""
             },
             "require": {
@@ -12392,8 +12392,8 @@
                 "issues": "https://github.com/webinertia/webware-console/issues",
                 "source": "https://github.com/webinertia/webware-console/tree/1.0.x"
             },
-            "time": "2026-11-02T03:34:28+00:00",
-            "published-time": "2026-11-02T03:34:33+00:00"
+            "time": "2026-11-02T03:39:46+00:00",
+            "published-time": "2026-11-02T03:39:51+00:00"
         },
         {
             "name": "webware/webware-core",
