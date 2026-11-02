@@ -7,7 +7,11 @@ coverage:
         base: auto
     patch:
       default:
-        target: auto
+        # Explicit, not `auto`: `auto` needs a coverage report on the base
+        # commit, and the org CI workflow runs on pull_request only, so a
+        # default branch can have no report at all. With no base, Codecov
+        # cannot resolve `auto` and posts a passing status that gates nothing.
+        target: 95%
         threshold: 0%
         base: auto
 
