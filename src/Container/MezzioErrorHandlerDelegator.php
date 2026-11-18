@@ -25,7 +25,7 @@ use Webware\Log\Listener\MezzioErrorListener;
 use Webware\Log\LogChannel;
 
 /**
- * @phpstan-import-type LogDefaults from ConfigProvider
+ * @import-type LogDefaults from ConfigProvider
  */
 final class MezzioErrorHandlerDelegator
 {

@@ -55,6 +55,17 @@ final class ConfigProviderTest extends TestCase
      * @throws \PHPUnit\Exception
      */
     #[Test]
+    public function getConfigDefaultsLogFileDefaultsToTheDataDirectory(): void
+    {
+        $defaults = $this->provider->getConfigDefaults();
+
+        $this->assertSame('data/log/{channel}.log', $defaults['logFile']);
+    }
+
+    /**
+     * @throws \PHPUnit\Exception
+     */
+    #[Test]
     public function getConfigDefaultsProcessFlagsDefaultToFalse(): void
     {
         $defaults = $this->provider->getConfigDefaults();

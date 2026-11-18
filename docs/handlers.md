@@ -1,8 +1,55 @@
 # Handlers
 
-`webware-log` registers no Monolog handler by default, so a logger it builds has no sinks and discards records until a database handler is wired. This is deliberate: registering a relational database handler on every consumer's behalf would make a database a requirement of a package that may be used without one.
+`webware-log` registers no Monolog handler by default, so a logger it builds has no sinks and discards records until one is wired. This is deliberate: registering a database handler on every consumer's behalf would make a database a requirement of a package that may be used without one.
 
-`PhpDbHandler` is the handler this package ships for writing records to a database table. Registering it is the application's decision.
+`LogFactory` attaches a handler when the container has one under a key it knows:
+
+| Container key | Handler |
+|---|---|
+| `Monolog\Handler\StreamHandler::class` | `Webware\Log\Handler\StreamHandlerFactory` |
+| `Webware\Log\Handler\PhpDbHandler::class` | `Webware\Log\Handler\PhpDbHandlerFactory` |
+
+Both are opt-in, and a logger may carry both: one record then reaches the file and the table. Registering the factory is what turns a sink on.
+
+## StreamHandler
+
+Writes records to a file under the application's `data` directory e.g. to `data/log/{channel}.log`.
+
+### Requirements
+
+Only `monolog/monolog`, which is already a dependency. There is no external service and no adapter to register, so this handler works in a console application and a web application alike. Both are expected to run with the application root as the working directory, which is what makes `data/log` resolve to the same place in each.
+
+### Wiring
+
+```php
+// config/autoload/log.local.php
+use Monolog\Handler\StreamHandler;
+use Webware\Log\Handler\StreamHandlerFactory;
+
+return [
+    'dependencies' => [
+        'factories' => [
+            StreamHandler::class => StreamHandlerFactory::class,
+        ],
+    ],
+];
+```
+
+`StreamHandlerFactory` builds the path from the `logFile` config key and the configured channel, substituting `{channel}`. The default is `data/log/{channel}.log`, so the default configuration writes to `data/log/app.log`.
+
+```php
+// config/autoload/log.local.php
+use Psr\Log\LoggerInterface;
+
+return [
+    LoggerInterface::class => [
+        'channel'  => 'security',                   // data/log/security.log
+        'logFile'  => 'data/log/{channel}.log',     // the default
+    ],
+];
+```
+
+`Monolog\Handler\StreamHandler` creates the directory and the file on the first write, so nothing has to exist beforehand and `data/log` does not need to be committed.
 
 ## PhpDbHandler
 
@@ -32,7 +79,7 @@ return [
 ];
 ```
 
-That is the whole wiring. `LogFactory` checks for `PhpDbHandler` in the container and pushes it onto the logger when it is present, so registering the factory is what switches database logging on. With the key absent the check fails and the logger is built with no handlers, which is why an application that never installs `php-db/phpdb` is unaffected by the handler's absence.
+That is the whole wiring. `LogFactory` checks for `PhpDbHandler` in the container and pushes it onto the logger when it is present, so registering the factory is what switches database logging on. With the key absent the check fails and no database handler is attached, which is why an application that never installs `php-db/phpdb` is unaffected by the handler's absence.
 
 Push only one database handler: two writing the same table would store every record twice.
 

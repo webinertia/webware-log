@@ -12,6 +12,7 @@ return [
         'process_uuid'        => false,
         'process_translation' => false,
         'table'               => 'log',
+        'logFile'             => 'data/log/{channel}.log',
     ],
 ];
 ```
@@ -25,6 +26,7 @@ return [
 | `process_uuid` | `bool` | `false` | When `true`, pushes `RamseyUuidProcessor` onto the logger to add a UUID v7 to every log record's `extra` data |
 | `process_translation` | `bool` | `false` | When `true` and `Laminas\Translator\TranslatorInterface` is in the container, pushes `LaminasI18nProcessor` to translate log messages |
 | `table` | `string` | `'log'` | Database table name used by `PhpDbHandler` and `log:init-db`. Only read once a database handler is wired; see [Handlers](handlers.md) |
+| `logFile` | `string` | `'data/log/{channel}.log'` | Path `StreamHandlerFactory` writes to, relative to the application root. `{channel}` is replaced with the configured channel. Only read once the stream handler is registered; see [Handlers](handlers.md#streamhandler) |
 
 ## Channels
 

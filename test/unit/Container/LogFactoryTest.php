@@ -17,6 +17,7 @@ namespace WebwareTest\Log\Container;
 use Laminas\ServiceManager\ServiceManager;
 use Laminas\Translator\TranslatorInterface;
 use Monolog\Handler\HandlerInterface;
+use Monolog\Handler\StreamHandler;
 use Monolog\Handler\TestHandler;
 use Monolog\Logger;
 use Monolog\Processor\ProcessorInterface;
@@ -323,6 +324,25 @@ final class LogFactoryTest extends TestCase
         $logger = $factory($container);
 
         $this->assertSame(1, $this->countProcessorsOfType($logger, PsrLogMessageProcessor::class));
+    }
+
+    /**
+     * @throws ContainerExceptionInterface
+     * @throws NotFoundExceptionInterface
+     * @throws \PHPUnit\Exception
+     */
+    #[Test]
+    public function invokePushesStreamHandlerProvidedByContainer(): void
+    {
+        $handler   = $this->createStub(StreamHandler::class);
+        $container = $this->makeContainer([], [StreamHandler::class => $handler]);
+
+        $factory = new LogFactory();
+
+        /** @var Logger $logger */
+        $logger = $factory($container);
+
+        $this->assertSame([$handler], $logger->getHandlers());
     }
 
     /**
