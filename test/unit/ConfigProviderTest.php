@@ -27,6 +27,7 @@ use Webware\Log\ConfigProvider;
 use Webware\Log\Console\Container\InitDbCommandFactory;
 use Webware\Log\Console\InitDbCommand;
 use Webware\Log\Event\LogEvent;
+use Webware\Log\Handler\PhpDbHandler;
 use Webware\Log\Listener\Psr3LogPsr14Listener;
 use Webware\Log\LogChannel;
 
@@ -109,6 +110,17 @@ final class ConfigProviderTest extends TestCase
         $deps = $this->provider->getDependencies();
 
         $this->assertArrayHasKey(ListenerProviderInterface::class, $deps['aliases']);
+    }
+
+    /**
+     * @throws \PHPUnit\Exception
+     */
+    #[Test]
+    public function getDependenciesDoesNotRegisterThePhpDbHandlerFactory(): void
+    {
+        $deps = $this->provider->getDependencies();
+
+        $this->assertArrayNotHasKey(PhpDbHandler::class, $deps['factories']);
     }
 
     /**

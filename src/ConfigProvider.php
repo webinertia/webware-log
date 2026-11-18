@@ -44,7 +44,6 @@ use Webware\Console\ConsoleInterface;
  *     Listener\Psr3LogPsr14Listener::class: class-string,
  *     LoggerInterface::class: class-string,
  *     Http\Middleware\MonologMiddleware::class: class-string,
- *     Handler\PhpDbHandler::class: class-string,
  *     Console\InitDbCommand::class: class-string,
  *     Processor\LaminasI18nProcessor::class: class-string,
  * }
@@ -108,7 +107,6 @@ class ConfigProvider
                 Listener\Psr3LogPsr14Listener::class     => Listener\Container\Psr3LogPsr14ListenerFactory::class,
                 LoggerInterface::class                   => Container\LogFactory::class,
                 Http\Middleware\MonologMiddleware::class => Http\Middleware\Container\MonologMiddlewareFactory::class,
-                Handler\PhpDbHandler::class              => Handler\PhpDbHandlerFactory::class,
                 Console\InitDbCommand::class             => Console\Container\InitDbCommandFactory::class,
                 Processor\LaminasI18nProcessor::class    => Processor\LaminasI18nProcessorFactory::class,
             ],

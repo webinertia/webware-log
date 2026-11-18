@@ -14,8 +14,8 @@ declare(strict_types=1);
 
 namespace WebwareTest\Log\Container;
 
+use Laminas\ServiceManager\ServiceManager;
 use Laminas\Translator\TranslatorInterface;
-use Monolog\Handler\HandlerInterface;
 use Monolog\Handler\TestHandler;
 use Monolog\Logger;
 use Monolog\Processor\ProcessorInterface;
@@ -28,8 +28,8 @@ use Psr\Container\ContainerExceptionInterface;
 use Psr\Container\ContainerInterface;
 use Psr\Container\NotFoundExceptionInterface;
 use Psr\Log\LoggerInterface;
+use Webware\Log\ConfigProvider;
 use Webware\Log\Container\LogFactory;
-use Webware\Log\Handler\PhpDbHandler;
 use Webware\Log\Processor\LaminasI18nProcessor;
 use Webware\Log\Processor\RamseyUuidProcessor;
 
@@ -63,11 +63,7 @@ final class LogFactoryTest extends TestCase
     #[Test]
     public function invokeFallsBackToDefaultsWhenNoConfig(): void
     {
-        $handler   = $this->createStub(HandlerInterface::class);
-        $container = $this->makeContainer(
-            [],
-            [PhpDbHandler::class => $handler],
-        );
+        $container = $this->makeContainer([]);
 
         $factory = new LogFactory();
 
@@ -87,13 +83,15 @@ final class LogFactoryTest extends TestCase
     {
         $handler = new TestHandler();
 
-        // LogFactory does not type-check the service it resolves for this key, so a TestHandler is accepted.
-        $container = $this->makeContainer([], [PhpDbHandler::class => $handler]);
+        $container = $this->makeContainer([]);
 
         $factory = new LogFactory();
 
         /** @var Logger $logger */
         $logger = $factory($container);
+
+        // LogFactory pushes no handler, so the sink is attached here to observe the record.
+        $logger->pushHandler($handler);
 
         $logger->info('hello {name}', ['name' => 'Joey']);
 
@@ -101,25 +99,6 @@ final class LogFactoryTest extends TestCase
 
         $this->assertCount(1, $records);
         $this->assertArrayHasKey('name', $records[0]->context);
-    }
-
-    /**
-     * @throws ContainerExceptionInterface
-     * @throws NotFoundExceptionInterface
-     * @throws \PHPUnit\Exception
-     */
-    #[Test]
-    public function invokePushesHandlerProvidedByContainer(): void
-    {
-        $handler   = $this->createStub(HandlerInterface::class);
-        $container = $this->makeContainer([], [PhpDbHandler::class => $handler]);
-
-        $factory = new LogFactory();
-
-        /** @var Logger $logger */
-        $logger = $factory($container);
-
-        $this->assertSame([$handler], $logger->getHandlers());
     }
 
     /**
@@ -294,7 +273,6 @@ final class LogFactoryTest extends TestCase
     #[Test]
     public function invokePushesPsrLogMessageProcessorWithConfiguredProcessors(): void
     {
-        $handler              = $this->createStub(HandlerInterface::class);
         $translator           = $this->createStub(TranslatorInterface::class);
         $translationProcessor = new LaminasI18nProcessor($translator);
 
@@ -309,7 +287,6 @@ final class LogFactoryTest extends TestCase
                 ],
             ],
             [
-                PhpDbHandler::class         => $handler,
                 TranslatorInterface::class  => $translator,
                 LaminasI18nProcessor::class => $translationProcessor,
             ],
@@ -331,7 +308,6 @@ final class LogFactoryTest extends TestCase
     #[Test]
     public function invokePushesTranslationProcessorWhenConfigured(): void
     {
-        $handler   = $this->createStub(HandlerInterface::class);
         $processor = $this->createStub(ProcessorInterface::class);
 
         $container = $this->makeContainer(
@@ -345,7 +321,6 @@ final class LogFactoryTest extends TestCase
                 ],
             ],
             [
-                PhpDbHandler::class         => $handler,
                 TranslatorInterface::class  => $this->createStub(TranslatorInterface::class),
                 LaminasI18nProcessor::class => $processor,
             ],
@@ -421,6 +396,27 @@ final class LogFactoryTest extends TestCase
     }
 
     /**
+     * The package's own config, in a real container, must resolve a logger
+     * with no adapter registered: phpdb is not a runtime requirement.
+     *
+     * @throws \PHPUnit\Exception
+     */
+    #[Test]
+    public function invokeResolvesFromThePackageConfigWithoutAPhpDbAdapter(): void
+    {
+        $config = [
+            'config' => new ConfigProvider()(),
+        ];
+
+        $container = new ServiceManager([...$config['config']['dependencies'], 'services' => $config]);
+
+        $logger = new LogFactory()($container);
+
+        $this->assertInstanceOf(LoggerInterface::class, $logger);
+        $this->assertSame([], $logger->getHandlers());
+    }
+
+    /**
      * @throws ContainerExceptionInterface
      * @throws NotFoundExceptionInterface
      * @throws \PHPUnit\Exception
@@ -428,11 +424,7 @@ final class LogFactoryTest extends TestCase
     #[Test]
     public function invokeReturnsLoggerInterface(): void
     {
-        $handler   = $this->createStub(HandlerInterface::class);
-        $container = $this->makeContainer(
-            [],
-            [PhpDbHandler::class => $handler],
-        );
+        $container = $this->makeContainer([]);
 
         $factory = new LogFactory();
         $logger  = $factory($container);
@@ -448,19 +440,15 @@ final class LogFactoryTest extends TestCase
     #[Test]
     public function invokeUsesConfiguredChannel(): void
     {
-        $handler   = $this->createStub(HandlerInterface::class);
-        $container = $this->makeContainer(
-            [
-                LoggerInterface::class => [
-                    'channel'             => 'security',
-                    'log_errors'          => false,
-                    'process_uuid'        => false,
-                    'process_translation' => false,
-                    'table'               => 'log',
-                ],
+        $container = $this->makeContainer([
+            LoggerInterface::class => [
+                'channel'             => 'security',
+                'log_errors'          => false,
+                'process_uuid'        => false,
+                'process_translation' => false,
+                'table'               => 'log',
             ],
-            [PhpDbHandler::class => $handler],
-        );
+        ]);
 
         $factory = new LogFactory();
 

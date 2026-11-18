@@ -1,18 +1,70 @@
 # Handlers
 
-Two Monolog handlers are provided for persisting log records to a relational database. Register only the one that matches your application's database adapter.
+`webware-log` registers no Monolog handler. `LogFactory` returns a `Monolog\Logger` with no handlers attached, so records are discarded until the application pushes a sink of its own. This is deliberate: pushing a relational database handler on every consumer's behalf would make a database a requirement of a package that may be used without one.
 
-## LaminasDbHandler
+`PhpDbHandler` is the handler this package ships for writing records to a database table. Wiring it is the application's decision.
 
-Uses `laminas/laminas-db` to write records.
+## PhpDbHandler
+
+Uses `php-db/phpdb` to write records.
 
 ### Requirements
 
-`Laminas\Db\Adapter\AdapterInterface` must be registered in the PSR-11 container. Refer to the [laminas-db documentation](https://docs.laminas.dev/laminas-db/) for adapter configuration.
+- `php-db/phpdb` and a driver package (for example `php-db/phpdb-mysql`) installed in the application. Neither is a runtime requirement of `webware-log`; `php-db/phpdb-mysql` appears only in its `require-dev` and `suggest`.
+- `PhpDb\Adapter\AdapterInterface` registered in the PSR-11 container. `php-db/phpdb`'s own `ConfigProvider` wires it; refer to the [php-db documentation](https://docs.php-db.dev/). phpdb does not share `laminas-db`'s configuration structure.
+- The log table created. Import the fixture described in [Installation](installation.md#database-table), or run `log:init-db`.
 
 ### Wiring
 
-`LaminasDbHandler` is registered in the container by `LaminasDbHandlerFactory` and pushed onto the logger by `LogFactory`. No additional wiring is needed beyond providing the adapter in the container.
+`Webware\Log\Handler\PhpDbHandlerFactory` builds the handler from the adapter, the `table` config key and the identity field. It is public and stays supported, but `Webware\Log\ConfigProvider` does not register it. Register it in your own config:
+
+```php
+// config/autoload/log.local.php
+use Psr\Log\LoggerInterface;
+use Webware\Log\Handler\PhpDbHandler;
+use Webware\Log\Handler\PhpDbHandlerFactory;
+
+return [
+    'dependencies' => [
+        'factories' => [
+            PhpDbHandler::class    => PhpDbHandlerFactory::class,
+            LoggerInterface::class => MyApp\Container\DatabaseLogFactory::class,
+        ],
+    ],
+];
+```
+
+Registering the factory makes the handler resolvable; it does not put records into the table. The handler also has to be pushed onto the logger, which is what replacing the `LoggerInterface` factory does:
+
+```php
+namespace MyApp\Container;
+
+use Monolog\Logger;
+use Psr\Container\ContainerExceptionInterface;
+use Psr\Container\ContainerInterface;
+use Psr\Container\NotFoundExceptionInterface;
+use Psr\Log\LoggerInterface;
+use Webware\Log\Container\LogFactory;
+use Webware\Log\Handler\PhpDbHandler;
+
+final class DatabaseLogFactory
+{
+    /**
+     * @throws ContainerExceptionInterface
+     * @throws NotFoundExceptionInterface
+     */
+    public function __invoke(ContainerInterface $container): LoggerInterface
+    {
+        /** @var Logger $logger */
+        $logger = (new LogFactory())($container);
+        $logger->pushHandler($container->get(PhpDbHandler::class));
+
+        return $logger;
+    }
+}
+```
+
+`LogFactory` builds the logger, channel and processors as usual; the decorator adds the sink. Push only one database handler: two writing the same table would store every record twice.
 
 ### Column Mapping
 
@@ -21,44 +73,11 @@ Uses `laminas/laminas-db` to write records.
 | `channel` | `channel` |
 | `level_name` | `level` |
 | `extra.uuid` | `uuid` |
-| `formatted` | `message` |
+| `message` | `message` |
 | `datetime` (unix) | `time` |
-| `extra.email` (or custom key) | `user_identifier` |
+| `extra.{identity field}` | `user_identifier` |
+| `context` and filtered `extra` (JSON) | `context` |
 
-### Custom Auth Identifier
+## Identity Field
 
-By default the handler reads `extra.email` for the user column. Override via config:
-
-```php
-// Not yet exposed as a top-level config key - override by extending
-// LaminasDbHandlerFactory and passing a different $extraAuthIdentifier
-// to the LaminasDbHandler constructor.
-```
-
-## PhpDbHandler
-
-Uses `php-db/phpdb` to write records. The column mapping and write logic are identical to `LaminasDbHandler`.
-
-### Requirements
-
-`PhpDb\Adapter\AdapterInterface` must be registered via `php-db/phpdb`'s own `ConfigProvider`.
-
-### Choosing Between Handlers
-
-> Do not push both handlers onto the logger simultaneously. `LogFactory` only pushes `LaminasDbHandler` by default. To switch to `PhpDbHandler`, override `LogFactory` in your application config:
-
-```php
-use Webware\Log\Handler\PhpDbHandler;
-use Psr\Log\LoggerInterface;
-
-// config/autoload/log.local.php
-return [
-    'dependencies' => [
-        'factories' => [
-            LoggerInterface::class => MyApp\Container\CustomLogFactory::class,
-        ],
-    ],
-];
-```
-
-In `CustomLogFactory`, push `PhpDbHandler` instead of `LaminasDbHandler`.
+The handler reads the authenticated user from the record's `extra` under the key resolved from `authentication.username`, defaulting to `email`. That is the same key `MonologMiddleware` writes, so the two stay in step when the column is renamed. See [Identity Field](configuration.md#identity-field).

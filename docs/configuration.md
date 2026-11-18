@@ -24,7 +24,7 @@ return [
 | `log_errors` | `bool` | `false` | When `true`, the `MezzioErrorHandlerDelegator` wires `MezzioErrorListener` to automatically log uncaught exceptions |
 | `process_uuid` | `bool` | `false` | When `true`, pushes `RamseyUuidProcessor` onto the logger to add a UUID v7 to every log record's `extra` data |
 | `process_translation` | `bool` | `false` | When `true` and `Laminas\Translator\TranslatorInterface` is in the container, pushes `LaminasI18nProcessor` to translate log messages |
-| `table` | `string` | `'log'` | Database table name used by `PhpDbHandler` |
+| `table` | `string` | `'log'` | Database table name used by `PhpDbHandler` and `log:init-db`. Only read once a database handler is wired; see [Handlers](handlers.md) |
 
 ## Channels
 
