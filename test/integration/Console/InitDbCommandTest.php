@@ -116,11 +116,26 @@ final class InitDbCommandTest extends TestCase
     #[Override]
     protected function setUp(): void
     {
-        $hostname = $this->env('TESTS_ADAPTER_MYSQL_HOSTNAME', 'localhost');
-        $username = $this->env('TESTS_ADAPTER_MYSQL_USERNAME', 'webware');
-        $password = $this->env('TESTS_ADAPTER_MYSQL_PASSWORD', 'webware');
-        $database = $this->env('TESTS_ADAPTER_MYSQL_DATABASE', 'webware');
-        $port     = (int) $this->env('TESTS_ADAPTER_MYSQL_PORT', '3306');
+        $hostname = $this->env(
+            name   : 'TESTS_ADAPTER_MYSQL_HOSTNAME',
+            default: 'localhost',
+        );
+        $username = $this->env(
+            name   : 'TESTS_ADAPTER_MYSQL_USERNAME',
+            default: 'webware',
+        );
+        $password = $this->env(
+            name   : 'TESTS_ADAPTER_MYSQL_PASSWORD',
+            default: 'webware',
+        );
+        $database = $this->env(
+            name   : 'TESTS_ADAPTER_MYSQL_DATABASE',
+            default: 'webware',
+        );
+        $port = (int) $this->env(
+            name   : 'TESTS_ADAPTER_MYSQL_PORT',
+            default: '3306',
+        );
 
         $driver = new Driver(
             new Connection([
