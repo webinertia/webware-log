@@ -25,44 +25,44 @@ use Psr\Log\LoggerInterface;
 use Webware\Console\ConsoleInterface;
 
 /**
- * @phpstan-type LogDefaults array{
+ * @type LogDefaults array{
  *     channel: string,
  *     log_errors: bool,
  *     process_uuid: bool,
  *     process_translation: bool,
  *     table: string,
+ *     logFile: string,
  * }
- * @phpstan-type LogAliases array{
+ * @type LogAliases array{
  *     EventDispatcherInterface::class: class-string,
  *     ListenerProviderInterface::class: class-string,
  * }
- * @phpstan-type LogDelegators array{
+ * @type LogDelegators array{
  *     ErrorHandler::class: list<class-string>,
  * }
- * @phpstan-type LogFactories array{
+ * @type LogFactories array{
  *     ListenerProviderAggregate::class: class-string,
  *     Listener\Psr3LogPsr14Listener::class: class-string,
  *     LoggerInterface::class: class-string,
  *     Http\Middleware\MonologMiddleware::class: class-string,
- *     Handler\PhpDbHandler::class: class-string,
  *     Console\InitDbCommand::class: class-string,
  *     Processor\LaminasI18nProcessor::class: class-string,
  * }
- * @phpstan-type LogInvokables array{
+ * @type LogInvokables array{
  *     AttachableListenerProvider::class: class-string,
  *     PrioritizedListenerProvider::class: class-string,
  *     Processor\RamseyUuidProcessor::class: class-string,
  * }
- * @phpstan-type LogDependencies array{
+ * @type LogDependencies array{
  *     aliases: LogAliases,
  *     delegators: LogDelegators,
  *     factories: LogFactories,
  *     invokables: LogInvokables,
  * }
- * @phpstan-type LogListenerEntry array{listener: class-string, priority: int}
- * @phpstan-type LogListeners array<class-string, list<LogListenerEntry>>
- * @phpstan-type LogTemplatePaths array{paths: array{log: list<string>}}
- * @phpstan-type LogConfig array{
+ * @type LogListenerEntry array{listener: class-string, priority: int}
+ * @type LogListeners array<class-string, list<LogListenerEntry>>
+ * @type LogTemplatePaths array{paths: array{log: list<string>}}
+ * @type LogConfig array{
  *     dependencies: LogDependencies,
  *     listeners: LogListeners,
  *     listener_providers: array<empty>,
@@ -86,6 +86,7 @@ class ConfigProvider
             'process_uuid'        => false,
             'process_translation' => false,
             'table'               => 'log',
+            'logFile'             => 'data/log/{channel}.log',
         ];
     }
 
@@ -103,12 +104,10 @@ class ConfigProvider
                 ],
             ],
             'factories'  => [
-                ListenerProviderAggregate::class => Container\ListenerProviderAggregateFactory::class,
-
+                ListenerProviderAggregate::class         => Container\ListenerProviderAggregateFactory::class,
                 Listener\Psr3LogPsr14Listener::class     => Listener\Container\Psr3LogPsr14ListenerFactory::class,
                 LoggerInterface::class                   => Container\LogFactory::class,
                 Http\Middleware\MonologMiddleware::class => Http\Middleware\Container\MonologMiddlewareFactory::class,
-                Handler\PhpDbHandler::class              => Handler\PhpDbHandlerFactory::class,
                 Console\InitDbCommand::class             => Console\Container\InitDbCommandFactory::class,
                 Processor\LaminasI18nProcessor::class    => Processor\LaminasI18nProcessorFactory::class,
             ],

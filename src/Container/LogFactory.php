@@ -15,6 +15,7 @@ declare(strict_types=1);
 namespace Webware\Log\Container;
 
 use Laminas\Translator\TranslatorInterface;
+use Monolog\Handler\StreamHandler;
 use Monolog\Logger;
 use Monolog\Processor\PsrLogMessageProcessor;
 use Psr\Container\ContainerExceptionInterface;
@@ -27,7 +28,7 @@ use Webware\Log\LogChannel;
 use Webware\Log\Processor;
 
 /**
- * @phpstan-import-type LogDefaults from ConfigProvider
+ * @import-type LogDefaults from ConfigProvider
  */
 final class LogFactory
 {
@@ -46,6 +47,10 @@ final class LogFactory
 
         $channel = LogChannel::tryFrom($config['channel']) ?? LogChannel::App;
         $logger  = new Logger($channel->value);
+
+        if ($container->has(StreamHandler::class)) {
+            $logger->pushHandler($container->get(StreamHandler::class));
+        }
 
         if ($container->has(Handler\PhpDbHandler::class)) {
             $phpDbHandler = $container->get(Handler\PhpDbHandler::class);

@@ -23,7 +23,7 @@ use Webware\Log\ConfigProvider;
 use Webware\Log\Container\IdentityField;
 
 /**
- * @phpstan-import-type LogDefaults from ConfigProvider
+ * @import-type LogDefaults from ConfigProvider
  */
 final class PhpDbHandlerFactory
 {

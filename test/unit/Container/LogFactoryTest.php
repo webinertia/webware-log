@@ -14,8 +14,10 @@ declare(strict_types=1);
 
 namespace WebwareTest\Log\Container;
 
+use Laminas\ServiceManager\ServiceManager;
 use Laminas\Translator\TranslatorInterface;
 use Monolog\Handler\HandlerInterface;
+use Monolog\Handler\StreamHandler;
 use Monolog\Handler\TestHandler;
 use Monolog\Logger;
 use Monolog\Processor\ProcessorInterface;
@@ -28,6 +30,7 @@ use Psr\Container\ContainerExceptionInterface;
 use Psr\Container\ContainerInterface;
 use Psr\Container\NotFoundExceptionInterface;
 use Psr\Log\LoggerInterface;
+use Webware\Log\ConfigProvider;
 use Webware\Log\Container\LogFactory;
 use Webware\Log\Handler\PhpDbHandler;
 use Webware\Log\Processor\LaminasI18nProcessor;
@@ -329,6 +332,25 @@ final class LogFactoryTest extends TestCase
      * @throws \PHPUnit\Exception
      */
     #[Test]
+    public function invokePushesStreamHandlerProvidedByContainer(): void
+    {
+        $handler   = $this->createStub(StreamHandler::class);
+        $container = $this->makeContainer([], [StreamHandler::class => $handler]);
+
+        $factory = new LogFactory();
+
+        /** @var Logger $logger */
+        $logger = $factory($container);
+
+        $this->assertSame([$handler], $logger->getHandlers());
+    }
+
+    /**
+     * @throws ContainerExceptionInterface
+     * @throws NotFoundExceptionInterface
+     * @throws \PHPUnit\Exception
+     */
+    #[Test]
     public function invokePushesTranslationProcessorWhenConfigured(): void
     {
         $handler   = $this->createStub(HandlerInterface::class);
@@ -418,6 +440,28 @@ final class LogFactoryTest extends TestCase
         $logger = $factory($container);
 
         $this->assertSame(1, $this->countProcessorsOfType($logger, RamseyUuidProcessor::class));
+    }
+
+    /**
+     * The package's own config, in a real container, must resolve a logger
+     * with no adapter registered: phpdb is not a runtime requirement.
+     *
+     * @throws \PHPUnit\Exception
+     */
+    #[Test]
+    public function invokeResolvesFromThePackageConfigWithoutAPhpDbAdapter(): void
+    {
+        $config = new ConfigProvider()();
+
+        $container = new ServiceManager([
+            ...$config['dependencies'],
+            'services' => ['config' => $config],
+        ]);
+
+        /** @var Logger $logger */
+        $logger = new LogFactory()($container);
+
+        $this->assertSame([], $logger->getHandlers());
     }
 
     /**
