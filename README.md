@@ -29,7 +29,7 @@ Install the package and let `laminas-component-installer` inject the `ConfigProv
 composer require webware/webware-log
 ```
 
-Import the database schema and add the package's `ConfigProvider` to your config aggregator if not done automatically. The package registers no handler, so a logger it builds discards records until the application pushes one; to persist records to a table, install `php-db/phpdb` and wire `PhpDbHandler` as described in [Handlers](docs/handlers.md). Then pipe the middleware into your application pipeline:
+Import the database schema and add the package's `ConfigProvider` to your config aggregator if not done automatically. The package registers no handler by default, so a logger it builds discards records until one is wired; to persist records to a table, install `php-db/phpdb` and register `PhpDbHandler` as described in [Handlers](docs/handlers.md). Then pipe the middleware into your application pipeline:
 
 ```php
 // config/pipeline.php

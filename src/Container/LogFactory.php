@@ -22,6 +22,7 @@ use Psr\Container\ContainerInterface;
 use Psr\Container\NotFoundExceptionInterface;
 use Psr\Log\LoggerInterface;
 use Webware\Log\ConfigProvider;
+use Webware\Log\Handler;
 use Webware\Log\LogChannel;
 use Webware\Log\Processor;
 
@@ -45,6 +46,11 @@ final class LogFactory
 
         $channel = LogChannel::tryFrom($config['channel']) ?? LogChannel::App;
         $logger  = new Logger($channel->value);
+
+        if ($container->has(Handler\PhpDbHandler::class)) {
+            $phpDbHandler = $container->get(Handler\PhpDbHandler::class);
+            $logger->pushHandler($phpDbHandler);
+        }
 
         if ($config['process_uuid'] ?? false) {
             $processor = new Processor\RamseyUuidProcessor();
