@@ -153,8 +153,8 @@ final class MonologMiddlewareTest extends TestCase
     public function processorWritesUnderTheConfiguredIdentityField(): void
     {
         $extra = $this->capturedExtra(
-            [UserInterface::class => $this->userWithIdentity('user@example.com')],
-            'user_name',
+            attributes   : [UserInterface::class => $this->userWithIdentity('user@example.com')],
+            identityField: 'user_name',
         );
 
         self::assertSame(['user_name' => 'user@example.com'], $extra);

@@ -37,8 +37,9 @@ final class Psr3LogPsr14ListenerTest extends TestCase
     #[Test]
     public function invokeCallsLogWithCorrectLevelMessageAndContext(): void
     {
-        $event = new LogEvent(LogChannel::App, Level::Info);
-        $event->setMessage('Hello world');
+        $message = 'Hello world';
+        $event   = new LogEvent(LogChannel::App, Level::Info);
+        $event->setMessage($message);
         $event->setContext(['user' => 'alice']);
 
         $this->logger
@@ -46,7 +47,7 @@ final class Psr3LogPsr14ListenerTest extends TestCase
             ->method('log')
             ->with(
                 Level::Info->toPsrLogLevel(),
-                'Hello world',
+                $message,
                 ['user' => 'alice'],
             );
 
@@ -90,15 +91,16 @@ final class Psr3LogPsr14ListenerTest extends TestCase
     #[Test]
     public function invokePassesEmptyContextWhenNotSet(): void
     {
-        $event = new LogEvent(LogChannel::App, Level::Warning);
-        $event->setMessage('warn msg');
+        $message = 'warn msg';
+        $event   = new LogEvent(LogChannel::App, Level::Warning);
+        $event->setMessage($message);
 
         $this->logger
             ->expects($this->once())
             ->method('log')
             ->with(
                 Level::Warning->toPsrLogLevel(),
-                'warn msg',
+                $message,
                 [],
             );
 
@@ -111,8 +113,9 @@ final class Psr3LogPsr14ListenerTest extends TestCase
     #[Test]
     public function invokeUsesRenamedLoggerForLogging(): void
     {
-        $event = new LogEvent(LogChannel::Security, Level::Critical);
-        $event->setMessage('breach detected');
+        $message = 'breach detected';
+        $event   = new LogEvent(LogChannel::Security, Level::Critical);
+        $event->setMessage($message);
 
         $renamedLogger = $this->createMock(Logger::class);
 
@@ -124,7 +127,7 @@ final class Psr3LogPsr14ListenerTest extends TestCase
             ->method('log')
             ->with(
                 Level::Critical->toPsrLogLevel(),
-                'breach detected',
+                $message,
                 [],
             );
 
