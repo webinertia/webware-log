@@ -689,7 +689,7 @@ test (phpunit unit suite)
 
 ### Known Technical Debt (0.0.x)
 
-Items marked ✅ are addressed by the [0.1.0 refactoring plan](../plan/refactor-webware-log-0.1.0.md).
+Items marked ✅ are addressed by the [0.1.0 refactoring plan](refactor-axleus-log-0.1.0.md).
 
 | Location | Issue | 0.1.0 |
 |---|---|---|
@@ -720,7 +720,7 @@ Items marked ✅ are addressed by the [0.1.0 refactoring plan](../plan/refactor-
 
 ### 0.1.0 (Planned)
 
-Full scope defined in [plan/refactor-webware-log-0.1.0.md](../plan/refactor-webware-log-0.1.0.md).
+Full scope defined in [plan/refactor-axleus-log-0.1.0.md](refactor-axleus-log-0.1.0.md).
 
 | Change | Type | Plan Ref |
 |---|---|---|

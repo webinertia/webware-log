@@ -13,13 +13,15 @@ It also provides a PSR-14 event listener for error logging.
 
 ## Documentation
 
-- [Installation](docs/installation.md)
-- [Configuration Reference](docs/configuration.md)
-- [Middleware](docs/middleware.md)
-- [Handlers](docs/handlers.md)
-- [Processors](docs/processors.md)
-- [Event-Driven Logging (PSR-14)](docs/events.md)
-- [Error Logging](docs/error-logging.md)
+The 2.0 release line is documented under [docs/2.0](docs/2.0/index.md):
+
+- [Installation](docs/2.0/installation.md)
+- [Configuration Reference](docs/2.0/configuration.md)
+- [Middleware](docs/2.0/middleware.md)
+- [Handlers](docs/2.0/handlers.md)
+- [Processors](docs/2.0/processors.md)
+- [Event-Driven Logging (PSR-14)](docs/2.0/events.md)
+- [Error Logging](docs/2.0/error-logging.md)
 
 ## Quick Start
 
@@ -29,7 +31,7 @@ Install the package and let `laminas-component-installer` inject the `ConfigProv
 composer require webware/webware-log
 ```
 
-Import the database schema and add the package's `ConfigProvider` to your config aggregator if not done automatically. The package registers no handler by default, so a logger it builds discards records until one is wired. To write to `data/log/{channel}.log`, register `StreamHandlerFactory`; to persist records to a table, install `php-db/phpdb` and register `PhpDbHandler`. Both are described in [Handlers](docs/handlers.md). Then pipe the middleware into your application pipeline:
+Import the database schema and add the package's `ConfigProvider` to your config aggregator if not done automatically. The package registers no handler by default, so a logger it builds discards records until one is wired. To write to `data/log/{channel}.log`, register `StreamHandlerFactory`; to persist records to a table, install `php-db/phpdb` and register `PhpDbHandler`. Both are described in [Handlers](docs/2.0/handlers.md). Then pipe the middleware into your application pipeline:
 
 ```php
 // config/pipeline.php
@@ -51,4 +53,4 @@ return [
 ];
 ```
 
-See the [full documentation](docs/) for details on all options, handlers, processors, and event-driven logging.
+See the [full documentation](docs/2.0/index.md) for details on all options, handlers, processors, and event-driven logging.
