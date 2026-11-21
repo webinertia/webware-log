@@ -23,11 +23,11 @@ return [
 | Key | Type | Default | Description |
 |---|---|---|---|
 | `auth_attribute` | `string` | `UserInterface::class` | Request attribute key used to retrieve the authenticated user for log enrichment |
-| `channel` | `string` | `'app'` | Monolog channel name. Must match a `LogChannel` enum value (see [Channels](#channels)) |
+| `channel` | `string` | `'app'` | Monolog channel name. An unrecognised value falls back to `app` (see [Channels](#channels)) |
 | `log_errors` | `bool` | `false` | When `true`, the `MezzioErrorHandlerDelegator` wires `MezzioErrorListener` to automatically log uncaught exceptions |
 | `process_uuid` | `bool` | `false` | When `true`, pushes `RamseyUuidProcessor` onto the logger to add a UUID v7 to every log record's `extra` data |
-| `process_translation` | `bool` | `false` | When `true` and `Laminas\I18n\Translator\TranslatorInterface` is in the container, pushes `LaminasI18nProcessor` to translate log messages |
-| `table` | `string` | `'log'` | Database table name used by `LaminasDbHandler` |
+| `process_translation` | `bool` | `false` | When `true` and `Laminas\Translator\TranslatorInterface` is in the container, pushes `LaminasI18nProcessor` to translate log messages |
+| `table` | `string` | `'log'` | Database table name used by `PhpDbHandler`; see [Handlers](handlers.md) |
 
 ## Channels
 

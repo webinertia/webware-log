@@ -20,7 +20,7 @@ new Webware\Log\ConfigProvider(),
 
 ## Database Table
 
-One SQL fixture is provided for MySQL. For any other database supported by `laminas-db` use the fixture as a template.
+One SQL fixture is provided for MySQL. For any other database supported by `php-db/phpdb` use the fixture as a template.
 
 ```bash
 # import from the project root
@@ -32,9 +32,10 @@ The fixture creates a `log` table with the following columns:
 | Column | Type | Notes |
 |---|---|---|
 | `id` | `INT UNSIGNED AUTO_INCREMENT` | Primary key |
-| `channel` | `VARCHAR(255)` | Monolog channel name |
-| `level` | `VARCHAR(50)` | Log level name (e.g. `ERROR`) |
-| `uuid` | `VARCHAR(36)` | UUID v7 (populated when `process_uuid: true`) |
-| `message` | `TEXT` | Formatted log message |
+| `uuid` | `CHAR(36)` | UUID v7 (populated when `process_uuid: true`), unique |
+| `channel` | `VARCHAR(255)` | Monolog channel name, indexed |
+| `level` | `VARCHAR(9)` | Monolog level name (e.g. `ERROR`) |
+| `user_identifier` | `VARCHAR(320)` | Authenticated user identity (nullable) |
+| `message` | `LONGTEXT` | Formatted log message |
 | `time` | `INT UNSIGNED` | Unix timestamp |
-| `user_identifier` | `VARCHAR(255)` | Authenticated user identity (nullable) |
+| `context` | `LONGTEXT` | PSR-3 context and the extra data that is not mapped to a column, as JSON (nullable) |
