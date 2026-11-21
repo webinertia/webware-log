@@ -14,7 +14,7 @@ return [
 ];
 ```
 
-When `log_errors` is `true`, `MezzioErrorHandlerDelegator` is invoked during container build. It attaches `MezzioErrorListener` to the `ErrorHandler` as an error listener.
+When `log_errors` is `true`, `MezzioErrorHandlerDelegator` attaches `MezzioErrorListener` to the `ErrorHandler` as an error listener. The delegator is registered against the `ErrorHandler` service unconditionally, so it runs whenever that service is built; with the flag set to `false` it returns the handler untouched.
 
 ## How It Works
 

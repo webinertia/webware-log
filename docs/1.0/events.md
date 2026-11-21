@@ -22,22 +22,32 @@ $dispatcher->dispatch($event);
 
 | Method | Description |
 |---|---|
-| `__construct(LogChannel $channel, Level $level)` | Set the channel and level at construction |
-| `setMessage(string $message): static` | Set the log message |
-| `getMessage(): string` | Get the log message |
-| `setContext(array $context): static` | Set PSR-3 context data |
-| `getContext(): array` | Get context data |
-| `setExtra(array $extra): static` | Set Monolog extra data |
-| `getExtra(): array` | Get extra data |
+| `__construct(LogChannel $channel = LogChannel::App, Level $level = Level::Debug)` | Set the channel and level at construction; both have defaults |
+| `setChannel(LogChannel $channel): self` | Set the channel |
 | `getChannel(): LogChannel` | Get the channel |
+| `setLevel(Level $level): self` | Set the Monolog level |
 | `getLevel(): Level` | Get the Monolog level |
+| `setMessage(string $message): self` | Set the log message |
+| `getMessage(): string` | Get the log message |
+| `setContext(array $context): self` | Set PSR-3 context data |
+| `getContext(): array` | Get context data |
+| `setExtra(array $extra): self` | Set Monolog extra data |
+| `getExtra(): array` | Get extra data |
+| `setUuid(string $uuid): self` | Set the record's UUID |
+| `getUuid(): string` | Get the record's UUID |
+| `stopPropagation(): void` | Stop further listeners from seeing the event |
 | `isPropagationStopped(): bool` | PSR-14 propagation control |
+
+The built-in `Psr3LogPsr14Listener` writes the event's level, message and context to the logger. The
+event's `extra` and `uuid` are carried on the event and are not passed to the logger by that listener,
+so a listener that needs them reads them from the event.
 
 ### Level Constants
 
 `LogEvent` exposes string constants mirroring PSR-3 log levels for convenience:
 
 ```php
+LogEvent::EVENT_LOG           // 'log'
 LogEvent::EVENT_LOG_DEBUG     // 'debug'
 LogEvent::EVENT_LOG_INFO      // 'info'
 LogEvent::EVENT_LOG_WARNING   // 'warning'
@@ -68,4 +78,4 @@ Higher priority values run first. The built-in `Psr3LogPsr14Listener` is registe
 
 ## Laminas EventManager Bridge (Deprecated)
 
-`Psr3LogLaminasListener` bridges the Laminas EventManager to PSR-3. It is **deprecated as of 0.1.0** and will be removed in 0.2.0. Migrate to `LogEvent` + PSR-14 dispatch instead.
+`Psr3LogLaminasListener` bridges the Laminas EventManager to PSR-3. It is **deprecated** and is removed in 2.0. Migrate to `LogEvent` + PSR-14 dispatch instead.

@@ -43,6 +43,11 @@ When a `Mezzio\Authentication\UserInterface` instance is found on the request, a
 $record->extra['email'] = $userInterface->getIdentity();
 ```
 
+The attribute the middleware reads is configurable through the `auth_attribute` config key, which
+defaults to `Mezzio\Authentication\UserInterface::class`. The key it writes to is always `email`,
+because `PhpDbHandler` reads `extra.email` by default. See
+[Authentication Attribute](configuration.md#authentication-attribute).
+
 This happens before the request is forwarded to the next middleware, so all log records written during that request carry the user identity automatically.
 
 If no authenticated user is present the processor is not pushed and the `extra.email` key will be absent.

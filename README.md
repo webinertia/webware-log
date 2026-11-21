@@ -13,13 +13,15 @@ It also provides a PSR-14 event listener and a Laminas EventManager bridge liste
 
 ## Documentation
 
-- [Installation](docs/installation.md)
-- [Configuration Reference](docs/configuration.md)
-- [Middleware](docs/middleware.md)
-- [Handlers](docs/handlers.md)
-- [Processors](docs/processors.md)
-- [Event-Driven Logging (PSR-14)](docs/events.md)
-- [Error Logging](docs/error-logging.md)
+The 1.x release line is documented under [docs/1.0](docs/1.0/index.md):
+
+- [Installation](docs/1.0/installation.md)
+- [Configuration Reference](docs/1.0/configuration.md)
+- [Middleware](docs/1.0/middleware.md)
+- [Handlers](docs/1.0/handlers.md)
+- [Processors](docs/1.0/processors.md)
+- [Event-Driven Logging (PSR-14)](docs/1.0/events.md)
+- [Error Logging](docs/1.0/error-logging.md)
 
 ## Quick Start
 
@@ -51,4 +53,4 @@ return [
 ];
 ```
 
-See the [full documentation](docs/) for details on all options, handlers, processors, and event-driven logging.
+See the [full documentation](docs/1.0/index.md) for details on all options, handlers, processors, and event-driven logging.
