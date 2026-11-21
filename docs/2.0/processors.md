@@ -1,6 +1,6 @@
 # Processors
 
-Monolog processors enrich log records with additional data before they are written. This package ships two optional processors, both guarded by config flags.
+Monolog processors enrich log records with additional data before they are written. This package ships two optional processors, both guarded by config flags. `LogFactory` also always pushes Monolog's `PsrLogMessageProcessor`, so PSR-3 `{placeholder}` references in a message are interpolated from the record's context whether or not either flag is set.
 
 ## RamseyUuidProcessor
 
@@ -39,7 +39,7 @@ return [
 ];
 ```
 
-When enabled, `LogFactory` retrieves `LaminasI18nProcessor` from the container, which is constructed with the translator from the container. If no translator is registered, `LaminasI18nProcessorFactory` throws a `ServiceNotFoundException`.
+When enabled, `LogFactory` pushes `LaminasI18nProcessor` when a `Laminas\Translator\TranslatorInterface` is registered in the container. With the flag set and no translator registered, the processor is not resolved at all, so no exception is raised and messages are logged untranslated. `LaminasI18nProcessorFactory` does throw a `ServiceNotFoundException` if something else asks it to build the processor without a translator.
 
 ### Behaviour
 

@@ -2,7 +2,7 @@
 
 `Webware\Log\Http\Middleware\MonologMiddleware` is a PSR-15 middleware that:
 
-1. Reads the authenticated user from the request (if present) and pushes a processor that adds the user's identity string to every log record's `extra.email` field.
+1. Reads the authenticated user from the request (if present) and pushes a processor that adds the user's identity string to every log record's `extra` field, under the configured identity field, which defaults to `email`.
 2. Attaches the logger to the request under `Psr\Log\LoggerInterface::class` so downstream middleware and handlers can retrieve it without depending on the container.
 
 ## Registering in the Pipeline
