@@ -1,7 +1,8 @@
 {
   "php_versions": [
     "8.4",
-    "8.5"
+    "8.5",
+    "8.6"
   ],
   "run_integration": true,
   "db_image": "mysql:9.7",
