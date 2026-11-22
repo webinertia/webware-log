@@ -1,0 +1,62 @@
+// markdownlint-cli2 configuration for aligned packages.
+//
+// Formatting consistency for documentation: every default rule except two.
+//
+// Off by design:
+//   MD013 line-length       - 1588 findings in webware-console alone, and prose
+//                             wrapping is not structural consistency
+//   MD060 table-column-style - alignment padding, same reasoning
+//
+// Out of scope, because these trees are not documentation this package authors:
+//   .github/**        - agent configuration: copilot-instructions.md is generated
+//                       from the preset, skills/ and instructions/ are maintained
+//                       by the agent tooling, not by hand as documentation
+//   .specify/**       - spec-kit managed templates
+//   specs/**          - spec-kit feature specs; they stay in the repo as working
+//                       artifacts driving implementation, not as published docs
+//   plan/**           - working plans and session handoffs, never published
+//
+// Measured across the fleet, these trees produced the large majority of findings,
+// and none of them were findings an author of published documentation could act on.
+//
+// Tuned rules, each verified to leave rendered output unchanged:
+//   MD024 siblings_only      - repeated heading text under different parents is
+//                              normal structure, so only same-parent repeats fail
+//   MD033 allowed details, summary - disclosure blocks are authored on purpose
+//   MD025 front_matter_title - a YAML `title:` is metadata, not a heading, so a
+//                              document carrying both it and its own H1 is one
+//                              title, not two
+//
+// LICENSE.md and COPYRIGHT.md start with prose by convention, so MD041 would
+// always fire on them. They are not documentation and are ignored outright.
+//
+// The required workflow runs this by name as the `markdown` job, and it pins
+// markdownlint-cli2 0.24.2. This configuration is validated against that exact
+// version; an unpinned run can report a different set of findings.
+{
+  "config": {
+    "default": true,
+    "MD013": false,
+    "MD024": {
+      "siblings_only": true
+    },
+    "MD025": {
+      "front_matter_title": ""
+    },
+    "MD033": {
+      "allowed_elements": ["details", "summary"]
+    },
+    "MD060": false
+  },
+  "globs": ["**/*.md"],
+  "ignores": [
+    "vendor/**",
+    "node_modules/**",
+    ".github/**",
+    ".specify/**",
+    "specs/**",
+    "plan/**",
+    "LICENSE.md",
+    "COPYRIGHT.md"
+  ]
+}

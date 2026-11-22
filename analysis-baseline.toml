@@ -39,7 +39,7 @@ count = 1
 [[issues]]
 file = "src/Container/ListenerProviderAggregateFactory.php"
 code = "redundant-type-comparison"
-message = "Redundant type assertion: `$listener['priority']` is already `int`."
+message = "Redundant type assertion: `$listener['priority']` is already `negative-int|positive-int`."
 count = 1
 
 [[issues]]
