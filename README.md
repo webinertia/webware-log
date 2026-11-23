@@ -13,7 +13,7 @@ It also provides a PSR-14 event listener for error logging.
 
 ## Documentation
 
-The 2.0 release line is documented under [docs/2.0](docs/2.0/index.md):
+The 2.0 release line is documented under [docs/2.0](docs/2.0):
 
 - [Installation](docs/2.0/installation.md)
 - [Configuration Reference](docs/2.0/configuration.md)
@@ -53,4 +53,4 @@ return [
 ];
 ```
 
-See the [full documentation](docs/2.0/index.md) for details on all options, handlers, processors, and event-driven logging.
+See the [full documentation](docs/2.0) for details on all options, handlers, processors, and event-driven logging.
