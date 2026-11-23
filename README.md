@@ -13,7 +13,7 @@ It also provides a PSR-14 event listener and a Laminas EventManager bridge liste
 
 ## Documentation
 
-The 1.x release line is documented under [docs/1.0](docs/1.0/index.md):
+The 1.x release line is documented under [docs/1.0](docs/1.0):
 
 - [Installation](docs/1.0/installation.md)
 - [Configuration Reference](docs/1.0/configuration.md)
@@ -53,4 +53,4 @@ return [
 ];
 ```
 
-See the [full documentation](docs/1.0/index.md) for details on all options, handlers, processors, and event-driven logging.
+See the [full documentation](docs/1.0) for details on all options, handlers, processors, and event-driven logging.
