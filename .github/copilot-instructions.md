@@ -13,6 +13,21 @@ acting, and again before reporting. The non-negotiables:
   measurement.
 - Every change lands through a pull request. Releases and tags belong to the repository owner.
 
+## Container runtime: WSL containers on Windows
+
+Local container work on Windows uses WSL containers through `wslc.exe` (default path
+`C:\Program Files\WSL\wslc.exe`). Do not start Docker Desktop, and do not invoke `docker`,
+`docker compose` or `docker build`, to run a build, a test or a tooling container on a Windows
+machine. Linux and macOS contributors, and the CI runners, keep using Docker.
+
+There is no `wslc compose` subcommand. A compose file is imported through the WSL Container Desktop
+app, or its services are translated into `wslc` commands: `docker run` -> `wslc run`,
+`docker build` -> `wslc build`, `docker exec` -> `wslc exec`, `docker ps` -> `wslc ps`,
+`docker images` -> `wslc images`, `docker volume` -> `wslc volume`.
+
+Where a repository's own prose still shows `docker compose` for local development, this rule wins for
+execution on Windows.
+
 ## PHPUnit Mock vs Stub Rules
 
 PHPUnit 13 enforces a strict separation between mocks and stubs. Violating these rules produces `PHPUnit Notices` that cause test suite failures under `failOnNotice="true"` (configured in `phpunit.xml.dist`).
